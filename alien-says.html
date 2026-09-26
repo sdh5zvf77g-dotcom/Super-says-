@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#0a0a0f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -12,8 +12,7 @@
   <link rel="manifest" href="manifest.json">
   <title>Alien Says</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
-
+    /* Fully offline – no external fonts */
     :root {
       --bg: #05050a;
       --panel: #0d0d15;
@@ -30,13 +29,20 @@
       padding: 0;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
     }
 
     body {
       background: radial-gradient(ellipse at center, #0a0a18 0%, #000 70%);
       color: var(--text);
-      font-family: 'Orbitron', sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       min-height: 100dvh;
+      min-height: -webkit-fill-available;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -77,19 +83,19 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 18px;
+      gap: 14px;
     }
 
     /* Header / Logo */
     header {
       text-align: center;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
 
     .logo-wrap {
-      width: 88px;
-      height: 88px;
-      margin: 0 auto 10px;
+      width: 84px;
+      height: 84px;
+      margin: 0 auto 8px;
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, #1a3a1a, #0a1a0a);
       border: 3px solid var(--glow-green);
@@ -114,21 +120,19 @@
     }
 
     h1 {
-      font-size: 1.85rem;
+      font-size: 1.7rem;
       font-weight: 900;
       letter-spacing: 3px;
-      background: linear-gradient(90deg, var(--glow-green), var(--glow-cyan));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 30px rgba(57,255,20,0.5);
+      color: var(--glow-green);
+      text-shadow: 0 0 20px rgba(57,255,20,0.7), 0 0 40px rgba(57,255,20,0.3);
       margin-bottom: 2px;
     }
 
     .tagline {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: #6a9a6a;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
     }
 
     /* HUD */
@@ -136,8 +140,7 @@
       display: flex;
       justify-content: space-between;
       width: 100%;
-      gap: 12px;
-      font-family: 'Share Tech Mono', monospace;
+      gap: 10px;
     }
 
     .hud-box {
@@ -145,20 +148,21 @@
       background: var(--panel);
       border: 1px solid rgba(57,255,20,0.25);
       border-radius: 12px;
-      padding: 10px 12px;
+      padding: 8px 10px;
       text-align: center;
       box-shadow: 0 0 12px rgba(57,255,20,0.1);
     }
 
     .hud-label {
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       color: #5a8a5a;
       letter-spacing: 1px;
       margin-bottom: 2px;
+      text-transform: uppercase;
     }
 
     .hud-value {
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       font-weight: 700;
       color: var(--glow-green);
       text-shadow: 0 0 8px var(--glow-green);
@@ -167,40 +171,41 @@
     /* Game board */
     .board {
       position: relative;
-      width: 300px;
-      height: 300px;
-      margin: 8px 0;
+      width: 290px;
+      height: 290px;
+      margin: 6px 0;
+      flex-shrink: 0;
     }
 
     .pad {
       position: absolute;
-      width: 130px;
-      height: 130px;
-      border-radius: 24px;
+      width: 125px;
+      height: 125px;
+      border-radius: 22px;
       cursor: pointer;
-      transition: all 0.12s ease;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
       border: 3px solid transparent;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.5);
+      box-shadow: 0 5px 0 rgba(0,0,0,0.55);
     }
 
     .pad::before {
       content: '';
       position: absolute;
       inset: 0;
-      border-radius: 21px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent 50%);
+      border-radius: 19px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.18), transparent 55%);
       pointer-events: none;
     }
 
     .pad::after {
       content: '';
       position: absolute;
-      inset: 8px;
-      border-radius: 16px;
+      inset: 7px;
+      border-radius: 14px;
       border: 1px solid rgba(255,255,255,0.08);
       pointer-events: none;
     }
@@ -211,94 +216,94 @@
     .pad-yellow { bottom: 0; left: 0; background: linear-gradient(145deg, #6b6b1a, #3d3d0d); }
     .pad-blue   { bottom: 0; right: 0; background: linear-gradient(145deg, #1a1a6b, #0d0d3d); }
 
-    /* Active / lit states */
-    .pad.active, .pad.lit {
+    /* Active / lit states – stronger lights */
+    .pad.lit, .pad.active {
       transform: scale(0.96) translateY(2px);
-      box-shadow: 0 0 0 0 transparent;
+      box-shadow: 0 0 0 transparent;
     }
 
-    .pad-green.active, .pad-green.lit {
-      background: linear-gradient(145deg, #39ff14, #1aff00);
-      box-shadow: 0 0 30px #39ff14, 0 0 60px rgba(57,255,20,0.6), inset 0 0 20px rgba(255,255,255,0.3);
-      border-color: #aaffaa;
+    .pad-green.lit, .pad-green.active {
+      background: linear-gradient(145deg, #39ff14, #1aff00) !important;
+      box-shadow: 0 0 28px #39ff14, 0 0 55px rgba(57,255,20,0.7), inset 0 0 18px rgba(255,255,255,0.35);
+      border-color: #bfffbf;
     }
-    .pad-red.active, .pad-red.lit {
-      background: linear-gradient(145deg, #ff2a2a, #ff0000);
-      box-shadow: 0 0 30px #ff2a2a, 0 0 60px rgba(255,42,42,0.6), inset 0 0 20px rgba(255,255,255,0.3);
-      border-color: #ffaaaa;
+    .pad-red.lit, .pad-red.active {
+      background: linear-gradient(145deg, #ff2a2a, #ff0000) !important;
+      box-shadow: 0 0 28px #ff2a2a, 0 0 55px rgba(255,42,42,0.7), inset 0 0 18px rgba(255,255,255,0.35);
+      border-color: #ffbfbf;
     }
-    .pad-yellow.active, .pad-yellow.lit {
-      background: linear-gradient(145deg, #ffe600, #ffcc00);
-      box-shadow: 0 0 30px #ffe600, 0 0 60px rgba(255,230,0,0.6), inset 0 0 20px rgba(255,255,255,0.3);
-      border-color: #ffffaa;
+    .pad-yellow.lit, .pad-yellow.active {
+      background: linear-gradient(145deg, #ffe600, #ffcc00) !important;
+      box-shadow: 0 0 28px #ffe600, 0 0 55px rgba(255,230,0,0.7), inset 0 0 18px rgba(255,255,255,0.35);
+      border-color: #ffffbf;
     }
-    .pad-blue.active, .pad-blue.lit {
-      background: linear-gradient(145deg, #00f0ff, #0088ff);
-      box-shadow: 0 0 30px #00f0ff, 0 0 60px rgba(0,240,255,0.6), inset 0 0 20px rgba(255,255,255,0.3);
-      border-color: #aaffff;
+    .pad-blue.lit, .pad-blue.active {
+      background: linear-gradient(145deg, #00f0ff, #0088ff) !important;
+      box-shadow: 0 0 28px #00f0ff, 0 0 55px rgba(0,240,255,0.7), inset 0 0 18px rgba(255,255,255,0.35);
+      border-color: #bfffff;
     }
 
     .pad:active:not(.disabled) {
-      transform: scale(0.94) translateY(3px);
+      transform: scale(0.93) translateY(3px);
     }
 
     .pad.disabled {
       pointer-events: none;
-      opacity: 0.7;
+      opacity: 0.75;
     }
 
-    /* Center alien button / status */
+    /* Center alien button */
     .center {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 90px;
-      height: 90px;
+      width: 86px;
+      height: 86px;
       border-radius: 50%;
       background: radial-gradient(circle at 35% 35%, #1a2a1a, #050a05);
       border: 3px solid var(--glow-green);
       box-shadow:
-        0 0 25px rgba(57,255,20,0.5),
-        inset 0 0 15px rgba(0,0,0,0.8);
+        0 0 22px rgba(57,255,20,0.5),
+        inset 0 0 14px rgba(0,0,0,0.8);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       z-index: 5;
-      transition: all 0.2s;
+      transition: box-shadow 0.2s;
     }
 
-    .center:hover {
-      box-shadow: 0 0 40px rgba(57,255,20,0.8), inset 0 0 15px rgba(0,0,0,0.8);
+    .center:hover, .center:active {
+      box-shadow: 0 0 35px rgba(57,255,20,0.85), inset 0 0 14px rgba(0,0,0,0.8);
     }
 
     .center img {
-      width: 52px;
-      height: 52px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       object-fit: cover;
     }
 
     .center .status-text {
-      font-size: 0.55rem;
-      letter-spacing: 1px;
+      font-size: 0.52rem;
+      letter-spacing: 0.8px;
       color: var(--glow-green);
-      margin-top: 2px;
-      font-family: 'Share Tech Mono', monospace;
+      margin-top: 1px;
+      text-transform: uppercase;
+      font-weight: 600;
     }
 
-    /* Message / feedback */
+    /* Message */
     .message {
-      min-height: 28px;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.95rem;
+      min-height: 26px;
+      font-size: 0.9rem;
       text-align: center;
       color: var(--glow-cyan);
       text-shadow: 0 0 10px var(--glow-cyan);
-      letter-spacing: 1px;
-      transition: opacity 0.3s;
+      letter-spacing: 0.5px;
+      padding: 0 8px;
     }
 
     .message.error {
@@ -314,36 +319,36 @@
     /* Controls */
     .controls {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       width: 100%;
       justify-content: center;
       flex-wrap: wrap;
     }
 
     button.ctrl {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.8rem;
+      font-family: inherit;
+      font-size: 0.78rem;
       font-weight: 700;
       letter-spacing: 1px;
-      padding: 12px 22px;
+      padding: 11px 18px;
       border: none;
-      border-radius: 30px;
+      border-radius: 28px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
       text-transform: uppercase;
     }
 
     .btn-start {
-      background: linear-gradient(135deg, #39ff14, #00cc00);
-      color: #003300;
-      box-shadow: 0 0 20px rgba(57,255,20,0.5);
+      background: linear-gradient(135deg, #39ff14, #00bb00);
+      color: #002200;
+      box-shadow: 0 0 18px rgba(57,255,20,0.5);
     }
-    .btn-start:hover {
+    .btn-start:hover:not(:disabled) {
       transform: scale(1.05);
-      box-shadow: 0 0 30px rgba(57,255,20,0.8);
+      box-shadow: 0 0 28px rgba(57,255,20,0.8);
     }
     .btn-start:disabled {
-      opacity: 0.5;
+      opacity: 0.45;
       cursor: not-allowed;
       transform: none;
     }
@@ -354,7 +359,7 @@
       border: 1px solid rgba(0,240,255,0.4);
     }
     .btn-sound:hover {
-      background: rgba(0,240,255,0.1);
+      background: rgba(0,240,255,0.12);
     }
 
     .btn-reset {
@@ -363,14 +368,13 @@
       border: 1px solid rgba(255,68,102,0.4);
     }
 
-    /* Level indicator */
+    /* Level bar */
     .level-bar {
       width: 100%;
-      height: 6px;
+      height: 5px;
       background: #1a1a22;
       border-radius: 3px;
       overflow: hidden;
-      margin-top: 4px;
     }
     .level-fill {
       height: 100%;
@@ -380,12 +384,13 @@
       box-shadow: 0 0 8px var(--glow-green);
     }
 
-    /* Overlay for game over / start */
+    /* Overlay */
     .overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.75);
-      backdrop-filter: blur(6px);
+      background: rgba(0,0,0,0.78);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -402,75 +407,128 @@
     .overlay-card {
       background: linear-gradient(160deg, #0f1a0f, #0a0a12);
       border: 2px solid var(--glow-green);
-      border-radius: 20px;
-      padding: 28px 24px;
+      border-radius: 18px;
+      padding: 26px 22px;
       text-align: center;
-      max-width: 320px;
+      max-width: 300px;
       width: 90%;
       box-shadow: 0 0 40px rgba(57,255,20,0.3);
     }
 
     .overlay-card h2 {
-      font-size: 1.5rem;
-      margin-bottom: 8px;
+      font-size: 1.4rem;
+      margin-bottom: 6px;
       color: var(--glow-green);
     }
 
     .overlay-card p {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #8aba8a;
-      margin-bottom: 18px;
+      margin-bottom: 14px;
       line-height: 1.4;
     }
 
     .overlay-card .score-big {
-      font-size: 2.2rem;
+      font-size: 2.1rem;
       color: var(--glow-cyan);
       text-shadow: 0 0 15px var(--glow-cyan);
-      margin: 8px 0 16px;
+      margin: 6px 0 14px;
+      font-weight: 700;
     }
 
-    /* Footer tip */
     .tip {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: #3a5a3a;
       text-align: center;
-      margin-top: 4px;
+      margin-top: 2px;
+    }
+
+    /* Loading screen */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: #05050a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.4s;
+    }
+    #loader.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #loader .alien-spin {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid var(--glow-green);
+      box-shadow: 0 0 25px var(--glow-green);
+      overflow: hidden;
+      margin-bottom: 16px;
+      animation: logoPulse 1.5s ease-in-out infinite;
+    }
+    #loader .alien-spin img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #loader p {
+      color: var(--glow-green);
+      font-size: 0.9rem;
+      letter-spacing: 2px;
     }
 
     /* Responsive */
-    @media (max-width: 380px) {
-      .board { width: 270px; height: 270px; }
-      .pad { width: 115px; height: 115px; }
-      .center { width: 78px; height: 78px; }
-      .center img { width: 44px; height: 44px; }
-      h1 { font-size: 1.55rem; }
+    @media (max-width: 360px) {
+      .board { width: 260px; height: 260px; }
+      .pad { width: 112px; height: 112px; border-radius: 18px; }
+      .center { width: 74px; height: 74px; }
+      .center img { width: 42px; height: 42px; }
+      h1 { font-size: 1.45rem; letter-spacing: 2px; }
+    }
+
+    @media (max-height: 640px) {
+      .logo-wrap { width: 64px; height: 64px; margin-bottom: 4px; }
+      .board { width: 250px; height: 250px; }
+      .pad { width: 108px; height: 108px; }
+      .center { width: 70px; height: 70px; }
+      .center img { width: 40px; height: 40px; }
+      h1 { font-size: 1.35rem; }
+      .container { gap: 8px; padding: 10px; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <!-- Simple loader so user never sees a blank page -->
+  <div id="loader">
+    <div class="alien-spin">
+      <img src="alien-icon.jpg" alt="Alien" onerror="this.style.display='none'">
+    </div>
+    <p>ALIEN SAYS</p>
+  </div>
+
+  <div class="container" id="app" style="visibility:hidden;">
     <header>
       <div class="logo-wrap">
-        <img src="alien-icon.jpg" alt="Alien">
+        <img src="alien-icon.jpg" alt="Alien" onerror="this.parentElement.style.background='#1a3a1a'">
       </div>
       <h1>ALIEN SAYS</h1>
-      <div class="tagline">WATCH • LISTEN • REPEAT</div>
+      <div class="tagline">Watch • Listen • Repeat</div>
     </header>
 
     <div class="hud">
       <div class="hud-box">
-        <div class="hud-label">LEVEL</div>
+        <div class="hud-label">Level</div>
         <div class="hud-value" id="level">1</div>
       </div>
       <div class="hud-box">
-        <div class="hud-label">SCORE</div>
+        <div class="hud-label">Score</div>
         <div class="hud-value" id="score">0</div>
       </div>
       <div class="hud-box">
-        <div class="hud-label">BEST</div>
+        <div class="hud-label">Best</div>
         <div class="hud-value" id="best">0</div>
       </div>
     </div>
@@ -483,21 +541,21 @@
       <div class="pad pad-yellow" data-color="yellow" id="pad-yellow"></div>
       <div class="pad pad-blue" data-color="blue" id="pad-blue"></div>
 
-      <div class="center" id="centerBtn" title="Start / Status">
-        <img src="alien-icon.jpg" alt="Alien">
+      <div class="center" id="centerBtn" title="Start">
+        <img src="alien-icon.jpg" alt="Alien" onerror="this.style.display='none'">
         <div class="status-text" id="statusText">READY</div>
       </div>
     </div>
 
-    <div class="message" id="message">Tap the alien to start</div>
+    <div class="message" id="message">Tap the alien or START</div>
 
     <div class="controls">
       <button class="ctrl btn-start" id="startBtn">START</button>
-      <button class="ctrl btn-sound" id="soundBtn">🔊 SOUND ON</button>
+      <button class="ctrl btn-sound" id="soundBtn">🔊 ON</button>
       <button class="ctrl btn-reset" id="resetBtn">RESET</button>
     </div>
 
-    <div class="tip">Add to Home Screen for the full alien experience</div>
+    <div class="tip">Add to Home Screen for the full experience</div>
   </div>
 
   <!-- Game Over Overlay -->
@@ -511,327 +569,374 @@
   </div>
 
   <script>
-    // ============ AUDIO ENGINE (Web Audio API) ============
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    let audioCtx = null;
-    let soundEnabled = true;
+    (function () {
+      'use strict';
 
-    const freqs = {
-      green: 329.63,  // E4
-      red: 261.63,    // C4
-      yellow: 392.00, // G4
-      blue: 220.00    // A3
-    };
-
-    function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new AudioCtx();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-    }
-
-    function playTone(color, duration = 0.35, type = 'sine') {
-      if (!soundEnabled || !audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.value = freqs[color] || 300;
-      gain.gain.setValueAtTime(0.28, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + duration);
-    }
-
-    function playSuccess() {
-      if (!soundEnabled || !audioCtx) return;
-      [523.25, 659.25, 783.99].forEach((f, i) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.value = f;
-        gain.gain.setValueAtTime(0.18, audioCtx.currentTime + i * 0.12);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i * 0.12 + 0.25);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(audioCtx.currentTime + i * 0.12);
-        osc.stop(audioCtx.currentTime + i * 0.12 + 0.3);
-      });
-    }
-
-    function playError() {
-      if (!soundEnabled || !audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(180, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.4);
-      gain.gain.setValueAtTime(0.22, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.45);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.5);
-    }
-
-    function playStartFanfare() {
-      if (!soundEnabled || !audioCtx) return;
-      [220, 277, 330, 440].forEach((f, i) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'square';
-        osc.frequency.value = f;
-        gain.gain.setValueAtTime(0.12, audioCtx.currentTime + i * 0.08);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i * 0.08 + 0.2);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(audioCtx.currentTime + i * 0.08);
-        osc.stop(audioCtx.currentTime + i * 0.08 + 0.25);
-      });
-    }
-
-    // ============ GAME STATE ============
-    const colors = ['green', 'red', 'yellow', 'blue'];
-    let sequence = [];
-    let playerSeq = [];
-    let level = 1;
-    let score = 0;
-    let best = parseInt(localStorage.getItem('alienSaysBest') || '0', 10);
-    let isPlaying = false;
-    let isShowing = false;
-    let canClick = false;
-
-    // DOM
-    const pads = {
-      green: document.getElementById('pad-green'),
-      red: document.getElementById('pad-red'),
-      yellow: document.getElementById('pad-yellow'),
-      blue: document.getElementById('pad-blue')
-    };
-    const levelEl = document.getElementById('level');
-    const scoreEl = document.getElementById('score');
-    const bestEl = document.getElementById('best');
-    const messageEl = document.getElementById('message');
-    const statusText = document.getElementById('statusText');
-    const startBtn = document.getElementById('startBtn');
-    const soundBtn = document.getElementById('soundBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const centerBtn = document.getElementById('centerBtn');
-    const overlay = document.getElementById('overlay');
-    const overlayTitle = document.getElementById('overlayTitle');
-    const overlayMsg = document.getElementById('overlayMsg');
-    const overlayScore = document.getElementById('overlayScore');
-    const playAgainBtn = document.getElementById('playAgainBtn');
-    const levelFill = document.getElementById('levelFill');
-
-    bestEl.textContent = best;
-
-    // ============ HELPERS ============
-    function setMessage(text, type = '') {
-      messageEl.textContent = text;
-      messageEl.className = 'message' + (type ? ' ' + type : '');
-    }
-
-    function setStatus(text) {
-      statusText.textContent = text;
-    }
-
-    function updateHUD() {
-      levelEl.textContent = level;
-      scoreEl.textContent = score;
-      bestEl.textContent = best;
-      // level bar roughly maps 1-20
-      const pct = Math.min(100, (level / 20) * 100);
-      levelFill.style.width = pct + '%';
-    }
-
-    function lightPad(color, on = true) {
-      const pad = pads[color];
-      if (on) pad.classList.add('lit');
-      else pad.classList.remove('lit');
-    }
-
-    function flashPad(color, ms = 380) {
-      return new Promise(resolve => {
-        lightPad(color, true);
-        playTone(color, ms / 1000);
-        setTimeout(() => {
-          lightPad(color, false);
-          setTimeout(resolve, 120);
-        }, ms);
-      });
-    }
-
-    function disablePads(disabled) {
-      Object.values(pads).forEach(p => {
-        if (disabled) p.classList.add('disabled');
-        else p.classList.remove('disabled');
-      });
-    }
-
-    // ============ GAME FLOW ============
-    async function showSequence() {
-      isShowing = true;
-      canClick = false;
-      disablePads(true);
-      setStatus('WATCH');
-      setMessage('Alien is speaking...');
-      await sleep(500);
-
-      for (const color of sequence) {
-        await flashPad(color, 420 - Math.min(level * 8, 180)); // speeds up a bit
+      // ---------- Loader ----------
+      function hideLoader() {
+        var loader = document.getElementById('loader');
+        var app = document.getElementById('app');
+        if (loader) loader.classList.add('hide');
+        if (app) app.style.visibility = 'visible';
+        setTimeout(function () {
+          if (loader) loader.style.display = 'none';
+        }, 450);
       }
 
-      await sleep(250);
-      isShowing = false;
-      canClick = true;
-      disablePads(false);
-      setStatus('YOUR TURN');
-      setMessage('Your turn — repeat the sequence!');
-      playerSeq = [];
-    }
-
-    function nextRound() {
-      // Add one random color
-      const next = colors[Math.floor(Math.random() * 4)];
-      sequence.push(next);
-      updateHUD();
-      showSequence();
-    }
-
-    function handlePadClick(color) {
-      if (!canClick || isShowing || !isPlaying) return;
-
-      initAudio();
-      playerSeq.push(color);
-      flashPad(color, 280);
-
-      // Check
-      const idx = playerSeq.length - 1;
-      if (playerSeq[idx] !== sequence[idx]) {
-        // Wrong!
-        canClick = false;
-        playError();
-        setMessage('Wrong sequence!', 'error');
-        setStatus('FAIL');
-        Object.values(pads).forEach(p => p.classList.add('lit'));
-        setTimeout(() => {
-          Object.values(pads).forEach(p => p.classList.remove('lit'));
-          endGame(false);
-        }, 700);
-        return;
-      }
-
-      // Correct so far
-      if (playerSeq.length === sequence.length) {
-        // Completed round
-        canClick = false;
-        score += level * 10;
-        if (score > best) {
-          best = score;
-          localStorage.setItem('alienSaysBest', best);
-        }
-        updateHUD();
-        playSuccess();
-        setMessage('Correct! Next level...', 'success');
-        setStatus('GOOD');
-        level++;
-        setTimeout(() => {
-          nextRound();
-        }, 900);
-      }
-    }
-
-    function startGame() {
-      initAudio();
-      playStartFanfare();
-      sequence = [];
-      playerSeq = [];
-      level = 1;
-      score = 0;
-      isPlaying = true;
-      updateHUD();
-      overlay.classList.remove('show');
-      startBtn.disabled = true;
-      setMessage('Get ready...');
-      setStatus('GO');
-      setTimeout(() => nextRound(), 600);
-    }
-
-    function endGame(won = false) {
-      isPlaying = false;
-      canClick = false;
-      disablePads(true);
-      startBtn.disabled = false;
-
-      if (won) {
-        overlayTitle.textContent = 'YOU WIN!';
-        overlayMsg.textContent = 'The aliens accept you as one of their own.';
+      // Hide loader as soon as DOM is ready (images can load later)
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () {
+          setTimeout(hideLoader, 300);
+        });
       } else {
-        overlayTitle.textContent = 'GAME OVER';
-        overlayMsg.textContent = level > 8
-          ? 'Impressive! The mothership is watching.'
-          : 'The aliens are not impressed... try again!';
+        setTimeout(hideLoader, 300);
       }
-      overlayScore.textContent = score;
-      overlay.classList.add('show');
-      setStatus('END');
-      setMessage(won ? 'Victory!' : 'Game Over — try again');
-    }
 
-    function resetAll() {
-      sequence = [];
-      playerSeq = [];
-      level = 1;
-      score = 0;
-      isPlaying = false;
-      canClick = false;
-      isShowing = false;
+      // ---------- Audio ----------
+      var AudioCtx = window.AudioContext || window.webkitAudioContext;
+      var audioCtx = null;
+      var soundEnabled = true;
+
+      var freqs = {
+        green: 329.63,
+        red: 261.63,
+        yellow: 392.00,
+        blue: 220.00
+      };
+
+      function initAudio() {
+        try {
+          if (!audioCtx) audioCtx = new AudioCtx();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+        } catch (e) {
+          console.warn('Audio not available', e);
+        }
+      }
+
+      function playTone(color, duration) {
+        duration = duration || 0.35;
+        if (!soundEnabled || !audioCtx) return;
+        try {
+          var osc = audioCtx.createOscillator();
+          var gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freqs[color] || 300;
+          gain.gain.setValueAtTime(0.28, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + duration);
+        } catch (e) {}
+      }
+
+      function playSuccess() {
+        if (!soundEnabled || !audioCtx) return;
+        try {
+          [523.25, 659.25, 783.99].forEach(function (f, i) {
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.value = f;
+            var t = audioCtx.currentTime + i * 0.12;
+            gain.gain.setValueAtTime(0.18, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(t);
+            osc.stop(t + 0.3);
+          });
+        } catch (e) {}
+      }
+
+      function playError() {
+        if (!soundEnabled || !audioCtx) return;
+        try {
+          var osc = audioCtx.createOscillator();
+          var gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.4);
+          gain.gain.setValueAtTime(0.22, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.45);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.5);
+        } catch (e) {}
+      }
+
+      function playStartFanfare() {
+        if (!soundEnabled || !audioCtx) return;
+        try {
+          [220, 277, 330, 440].forEach(function (f, i) {
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.value = f;
+            var t = audioCtx.currentTime + i * 0.08;
+            gain.gain.setValueAtTime(0.12, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(t);
+            osc.stop(t + 0.25);
+          });
+        } catch (e) {}
+      }
+
+      // ---------- Game State ----------
+      var colors = ['green', 'red', 'yellow', 'blue'];
+      var sequence = [];
+      var playerSeq = [];
+      var level = 1;
+      var score = 0;
+      var best = 0;
+      try {
+        best = parseInt(localStorage.getItem('alienSaysBest') || '0', 10) || 0;
+      } catch (e) {}
+      var isPlaying = false;
+      var isShowing = false;
+      var canClick = false;
+
+      // DOM refs
+      var pads = {
+        green: document.getElementById('pad-green'),
+        red: document.getElementById('pad-red'),
+        yellow: document.getElementById('pad-yellow'),
+        blue: document.getElementById('pad-blue')
+      };
+      var levelEl = document.getElementById('level');
+      var scoreEl = document.getElementById('score');
+      var bestEl = document.getElementById('best');
+      var messageEl = document.getElementById('message');
+      var statusText = document.getElementById('statusText');
+      var startBtn = document.getElementById('startBtn');
+      var soundBtn = document.getElementById('soundBtn');
+      var resetBtn = document.getElementById('resetBtn');
+      var centerBtn = document.getElementById('centerBtn');
+      var overlay = document.getElementById('overlay');
+      var overlayTitle = document.getElementById('overlayTitle');
+      var overlayMsg = document.getElementById('overlayMsg');
+      var overlayScore = document.getElementById('overlayScore');
+      var playAgainBtn = document.getElementById('playAgainBtn');
+      var levelFill = document.getElementById('levelFill');
+
+      if (bestEl) bestEl.textContent = best;
+
+      // ---------- Helpers ----------
+      function setMessage(text, type) {
+        if (!messageEl) return;
+        messageEl.textContent = text;
+        messageEl.className = 'message' + (type ? ' ' + type : '');
+      }
+
+      function setStatus(text) {
+        if (statusText) statusText.textContent = text;
+      }
+
+      function updateHUD() {
+        if (levelEl) levelEl.textContent = level;
+        if (scoreEl) scoreEl.textContent = score;
+        if (bestEl) bestEl.textContent = best;
+        if (levelFill) {
+          var pct = Math.min(100, (level / 20) * 100);
+          levelFill.style.width = pct + '%';
+        }
+      }
+
+      function lightPad(color, on) {
+        var pad = pads[color];
+        if (!pad) return;
+        if (on) pad.classList.add('lit');
+        else pad.classList.remove('lit');
+      }
+
+      function flashPad(color, ms) {
+        ms = ms || 380;
+        return new Promise(function (resolve) {
+          lightPad(color, true);
+          playTone(color, ms / 1000);
+          setTimeout(function () {
+            lightPad(color, false);
+            setTimeout(resolve, 110);
+          }, ms);
+        });
+      }
+
+      function disablePads(disabled) {
+        Object.keys(pads).forEach(function (k) {
+          var p = pads[k];
+          if (!p) return;
+          if (disabled) p.classList.add('disabled');
+          else p.classList.remove('disabled');
+        });
+      }
+
+      function sleep(ms) {
+        return new Promise(function (r) { setTimeout(r, ms); });
+      }
+
+      // ---------- Game Flow ----------
+      async function showSequence() {
+        isShowing = true;
+        canClick = false;
+        disablePads(true);
+        setStatus('WATCH');
+        setMessage('Alien is speaking...');
+        await sleep(450);
+
+        var speed = Math.max(240, 420 - level * 9);
+        for (var i = 0; i < sequence.length; i++) {
+          await flashPad(sequence[i], speed);
+        }
+
+        await sleep(220);
+        isShowing = false;
+        canClick = true;
+        disablePads(false);
+        setStatus('YOUR TURN');
+        setMessage('Your turn — repeat!');
+        playerSeq = [];
+      }
+
+      function nextRound() {
+        var next = colors[Math.floor(Math.random() * 4)];
+        sequence.push(next);
+        updateHUD();
+        showSequence();
+      }
+
+      function handlePadClick(color) {
+        if (!canClick || isShowing || !isPlaying) return;
+
+        initAudio();
+        playerSeq.push(color);
+        flashPad(color, 260);
+
+        var idx = playerSeq.length - 1;
+        if (playerSeq[idx] !== sequence[idx]) {
+          canClick = false;
+          playError();
+          setMessage('Wrong sequence!', 'error');
+          setStatus('FAIL');
+          Object.keys(pads).forEach(function (k) {
+            if (pads[k]) pads[k].classList.add('lit');
+          });
+          setTimeout(function () {
+            Object.keys(pads).forEach(function (k) {
+              if (pads[k]) pads[k].classList.remove('lit');
+            });
+            endGame(false);
+          }, 650);
+          return;
+        }
+
+        if (playerSeq.length === sequence.length) {
+          canClick = false;
+          score += level * 10;
+          if (score > best) {
+            best = score;
+            try { localStorage.setItem('alienSaysBest', String(best)); } catch (e) {}
+          }
+          updateHUD();
+          playSuccess();
+          setMessage('Correct! Next level...', 'success');
+          setStatus('GOOD');
+          level++;
+          setTimeout(function () { nextRound(); }, 850);
+        }
+      }
+
+      function startGame() {
+        initAudio();
+        playStartFanfare();
+        sequence = [];
+        playerSeq = [];
+        level = 1;
+        score = 0;
+        isPlaying = true;
+        updateHUD();
+        if (overlay) overlay.classList.remove('show');
+        if (startBtn) startBtn.disabled = true;
+        setMessage('Get ready...');
+        setStatus('GO');
+        setTimeout(function () { nextRound(); }, 550);
+      }
+
+      function endGame(won) {
+        isPlaying = false;
+        canClick = false;
+        disablePads(true);
+        if (startBtn) startBtn.disabled = false;
+
+        if (overlayTitle) overlayTitle.textContent = won ? 'YOU WIN!' : 'GAME OVER';
+        if (overlayMsg) {
+          overlayMsg.textContent = won
+            ? 'The aliens accept you as one of their own.'
+            : (level > 8
+              ? 'Impressive! The mothership is watching.'
+              : 'The aliens are not impressed... try again!');
+        }
+        if (overlayScore) overlayScore.textContent = score;
+        if (overlay) overlay.classList.add('show');
+        setStatus('END');
+        setMessage(won ? 'Victory!' : 'Game Over — try again');
+      }
+
+      function resetAll() {
+        sequence = [];
+        playerSeq = [];
+        level = 1;
+        score = 0;
+        isPlaying = false;
+        canClick = false;
+        isShowing = false;
+        updateHUD();
+        disablePads(false);
+        Object.keys(pads).forEach(function (k) {
+          if (pads[k]) pads[k].classList.remove('lit', 'active');
+        });
+        if (startBtn) startBtn.disabled = false;
+        if (overlay) overlay.classList.remove('show');
+        setStatus('READY');
+        setMessage('Tap the alien or START');
+      }
+
+      // ---------- Events ----------
+      Object.keys(pads).forEach(function (color) {
+        var el = pads[color];
+        if (!el) return;
+        el.addEventListener('click', function () { handlePadClick(color); });
+        el.addEventListener('touchstart', function (e) {
+          e.preventDefault();
+          handlePadClick(color);
+        }, { passive: false });
+      });
+
+      if (startBtn) startBtn.addEventListener('click', startGame);
+      if (centerBtn) centerBtn.addEventListener('click', function () {
+        if (!isPlaying) startGame();
+      });
+      if (playAgainBtn) playAgainBtn.addEventListener('click', startGame);
+
+      if (soundBtn) {
+        soundBtn.addEventListener('click', function () {
+          soundEnabled = !soundEnabled;
+          soundBtn.textContent = soundEnabled ? '🔊 ON' : '🔇 OFF';
+          if (soundEnabled) initAudio();
+        });
+      }
+
+      if (resetBtn) resetBtn.addEventListener('click', resetAll);
+
+      // Prevent unwanted zoom / gestures on mobile
+      document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+
+      // Initial
       updateHUD();
-      disablePads(false);
-      Object.values(pads).forEach(p => p.classList.remove('lit', 'active'));
-      startBtn.disabled = false;
-      overlay.classList.remove('show');
-      setStatus('READY');
-      setMessage('Tap the alien or START to begin');
-    }
-
-    function sleep(ms) {
-      return new Promise(r => setTimeout(r, ms));
-    }
-
-    // ============ EVENT LISTENERS ============
-    Object.entries(pads).forEach(([color, el]) => {
-      el.addEventListener('click', () => handlePadClick(color));
-      el.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        handlePadClick(color);
-      }, { passive: false });
-    });
-
-    startBtn.addEventListener('click', startGame);
-    centerBtn.addEventListener('click', () => {
-      if (!isPlaying) startGame();
-    });
-    playAgainBtn.addEventListener('click', startGame);
-
-    soundBtn.addEventListener('click', () => {
-      soundEnabled = !soundEnabled;
-      soundBtn.textContent = soundEnabled ? '🔊 SOUND ON' : '🔇 SOUND OFF';
-      if (soundEnabled) initAudio();
-    });
-
-    resetBtn.addEventListener('click', resetAll);
-
-    // Prevent zoom on double tap etc.
-    document.addEventListener('gesturestart', e => e.preventDefault());
-
-    // Initial
-    updateHUD();
-    setMessage('Tap the alien or START to begin');
+      setMessage('Tap the alien or START');
+    })();
   </script>
 </body>
 </html>
