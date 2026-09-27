@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#0a0a0f">
+  <meta name="theme-color" content="#0a0618">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Alien Says">
@@ -12,931 +12,843 @@
   <link rel="manifest" href="manifest.json">
   <title>Alien Says</title>
   <style>
-    /* Fully offline – no external fonts */
     :root {
-      --bg: #05050a;
-      --panel: #0d0d15;
-      --glow-green: #39ff14;
-      --glow-cyan: #00f0ff;
-      --glow-magenta: #ff00aa;
-      --glow-yellow: #ffe600;
-      --text: #e0ffe0;
+      --bg: #06040f;
+      --panel: #0e0a1c;
+      --green: #39ff14;
+      --red: #ff2a4a;
+      --yellow: #ffe600;
+      --blue: #00d4ff;
+      --purple: #c44dff;
+      --orange: #ff8c00;
+      --cyan: #00f0ff;
+      --text: #e8e0ff;
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-
-    html, body {
-      height: 100%;
-      width: 100%;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
+    html, body { height: 100%; width: 100%; }
     body {
-      background: radial-gradient(ellipse at center, #0a0a18 0%, #000 70%);
+      background: radial-gradient(ellipse at 50% 30%, #1a0a2e 0%, #06040f 55%, #000 100%);
       color: var(--text);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      min-height: 100dvh;
-      min-height: -webkit-fill-available;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      position: relative;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100dvh; min-height: -webkit-fill-available;
+      display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+      overflow-x: hidden; overflow-y: auto; position: relative;
     }
-
-    /* Stars background */
     body::before {
-      content: '';
-      position: absolute;
-      inset: 0;
+      content: ''; position: fixed; inset: 0;
       background-image:
-        radial-gradient(1px 1px at 20px 30px, #fff, transparent),
-        radial-gradient(1px 1px at 40px 70px, rgba(255,255,255,0.8), transparent),
-        radial-gradient(1.5px 1.5px at 90px 40px, #fff, transparent),
-        radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent),
-        radial-gradient(1px 1px at 160px 20px, #fff, transparent);
-      background-size: 200px 100px;
-      animation: twinkle 8s linear infinite;
-      opacity: 0.4;
-      pointer-events: none;
-      z-index: 0;
+        radial-gradient(1px 1px at 10% 20%, #fff, transparent),
+        radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.7), transparent),
+        radial-gradient(1.5px 1.5px at 70% 30%, #fff, transparent),
+        radial-gradient(1px 1px at 85% 75%, rgba(180,120,255,0.8), transparent),
+        radial-gradient(1px 1px at 50% 90%, #fff, transparent),
+        radial-gradient(1px 1px at 15% 80%, rgba(0,240,255,0.6), transparent);
+      background-size: 100% 100%; animation: starDrift 40s linear infinite; opacity: 0.55; pointer-events: none; z-index: 0;
     }
-
-    @keyframes twinkle {
-      from { transform: translateY(0); }
-      to { transform: translateY(-100px); }
+    @keyframes starDrift { from { transform: translateY(0); } to { transform: translateY(-30px); } }
+    #edgeGlow {
+      position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: 0; transition: opacity 0.25s;
+      box-shadow: inset 0 0 80px var(--glow-color, #39ff14);
     }
-
     .container {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 420px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 14px;
+      position: relative; z-index: 1; width: 100%; max-width: 420px; padding: 16px 16px 28px;
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
     }
-
-    /* Header / Logo */
-    header {
-      text-align: center;
-      margin-bottom: 2px;
-    }
-
+    header { text-align: center; width: 100%; }
     .logo-wrap {
-      width: 84px;
-      height: 84px;
-      margin: 0 auto 8px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, #1a3a1a, #0a1a0a);
-      border: 3px solid var(--glow-green);
-      box-shadow:
-        0 0 20px var(--glow-green),
-        0 0 40px rgba(57,255,20,0.4),
-        inset 0 0 20px rgba(57,255,20,0.2);
-      overflow: hidden;
-      animation: logoPulse 3s ease-in-out infinite;
+      width: 68px; height: 68px; margin: 0 auto 8px; border-radius: 16px; background: #0a0618;
+      border: 2px solid rgba(180,120,255,0.6);
+      box-shadow: 0 0 25px rgba(100,60,255,0.45), inset 0 0 12px rgba(0,0,0,0.6);
+      overflow: hidden; animation: logoPulse 3.5s ease-in-out infinite;
     }
-
-    .logo-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
+    .logo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
     @keyframes logoPulse {
-      0%, 100% { box-shadow: 0 0 20px var(--glow-green), 0 0 40px rgba(57,255,20,0.3); }
-      50% { box-shadow: 0 0 30px var(--glow-green), 0 0 60px rgba(57,255,20,0.6); }
+      0%, 100% { box-shadow: 0 0 20px rgba(100,60,255,0.4); }
+      50% { box-shadow: 0 0 35px rgba(0,212,255,0.6), 0 0 60px rgba(180,80,255,0.3); }
     }
-
     h1 {
-      font-size: 1.7rem;
-      font-weight: 900;
-      letter-spacing: 3px;
-      color: var(--glow-green);
-      text-shadow: 0 0 20px rgba(57,255,20,0.7), 0 0 40px rgba(57,255,20,0.3);
-      margin-bottom: 2px;
+      font-size: 1.55rem; font-weight: 800; letter-spacing: 2.5px;
+      background: linear-gradient(90deg, #00d4ff, #c44dff, #39ff14);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1px;
     }
-
-    .tagline {
-      font-size: 0.72rem;
-      color: #6a9a6a;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-    }
-
-    /* HUD */
-    .hud {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      gap: 10px;
-    }
-
+    .tagline { font-size: 0.68rem; color: #7a6a9a; letter-spacing: 1.2px; text-transform: uppercase; }
+    .hud { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; }
     .hud-box {
-      flex: 1;
-      background: var(--panel);
-      border: 1px solid rgba(57,255,20,0.25);
-      border-radius: 12px;
-      padding: 8px 10px;
-      text-align: center;
-      box-shadow: 0 0 12px rgba(57,255,20,0.1);
+      background: var(--panel); border: 1px solid rgba(140,100,255,0.25); border-radius: 12px;
+      padding: 10px 6px; text-align: center;
     }
-
-    .hud-label {
-      font-size: 0.6rem;
-      color: #5a8a5a;
-      letter-spacing: 1px;
-      margin-bottom: 2px;
-      text-transform: uppercase;
+    .hud-label { font-size: 0.55rem; color: #6a5a8a; letter-spacing: 0.5px; text-transform: uppercase; }
+    .hud-value { font-size: 1.15rem; font-weight: 700; color: var(--cyan); text-shadow: 0 0 8px rgba(0,212,255,0.5); }
+    .modes { display: flex; gap: 10px; width: 100%; justify-content: center; flex-wrap: wrap; margin: 2px 0; }
+    .mode-btn {
+      font-size: 0.72rem; font-weight: 600; padding: 10px 14px; border-radius: 20px;
+      border: 1px solid rgba(140,100,255,0.35); background: var(--panel); color: #a090c0;
+      cursor: pointer; transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.5px;
+      min-width: 72px;
     }
-
-    .hud-value {
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: var(--glow-green);
-      text-shadow: 0 0 8px var(--glow-green);
+    .mode-btn.active {
+      background: linear-gradient(135deg, #5a2a9a, #2a1a5a); color: #e0d0ff;
+      border-color: var(--purple); box-shadow: 0 0 12px rgba(180,80,255,0.4);
     }
-
-    /* Game board */
+    .mode-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .bars { width: 100%; display: flex; flex-direction: column; gap: 8px; margin: 2px 0; }
+    .bar-row { display: flex; align-items: center; gap: 6px; }
+    .bar-label { font-size: 0.55rem; color: #6a5a8a; width: 36px; text-transform: uppercase; }
+    .bar-track { flex: 1; height: 5px; background: #1a1228; border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; width: 0%; border-radius: 3px; transition: width 0.35s ease; }
+    .level-fill { background: linear-gradient(90deg, var(--cyan), var(--purple)); box-shadow: 0 0 6px var(--cyan); }
+    .power-fill { background: linear-gradient(90deg, var(--green), var(--yellow)); box-shadow: 0 0 6px var(--green); }
     .board {
       position: relative;
-      width: 290px;
-      height: 290px;
-      margin: 6px 0;
+      width: 400px;
+      height: 400px;
+      margin: 14px 0;
       flex-shrink: 0;
     }
-
     .pad {
       position: absolute;
-      width: 125px;
-      height: 125px;
-      border-radius: 22px;
+      width: 110px;
+      height: 110px;
+      border-radius: 28px;
       cursor: pointer;
-      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
-      border: 3px solid transparent;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      transition: transform 0.09s ease, box-shadow 0.09s ease, background 0.09s ease, filter 0.09s;
+      border: 2px solid transparent;
       overflow: hidden;
-      box-shadow: 0 5px 0 rgba(0,0,0,0.55);
+      box-shadow: 0 5px 0 rgba(0,0,0,0.5);
     }
-
     .pad::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 19px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.18), transparent 55%);
-      pointer-events: none;
+      content: ''; position: absolute; inset: 0; border-radius: 24px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.22), transparent 50%); pointer-events: none;
     }
-
     .pad::after {
-      content: '';
-      position: absolute;
-      inset: 7px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.08);
-      pointer-events: none;
+      content: ''; position: absolute; inset: 0; border-radius: 24px; opacity: 0;
+      transition: opacity 0.15s; pointer-events: none; box-shadow: inset 0 0 24px rgba(255,255,255,0.4);
     }
-
-    /* Positions */
-    .pad-green  { top: 0; left: 0; background: linear-gradient(145deg, #1a6b1a, #0d3d0d); }
-    .pad-red    { top: 0; right: 0; background: linear-gradient(145deg, #6b1a1a, #3d0d0d); }
-    .pad-yellow { bottom: 0; left: 0; background: linear-gradient(145deg, #6b6b1a, #3d3d0d); }
-    .pad-blue   { bottom: 0; right: 0; background: linear-gradient(145deg, #1a1a6b, #0d0d3d); }
-
-    /* Active / lit states – stronger lights */
-    .pad.lit, .pad.active {
-      transform: scale(0.96) translateY(2px);
-      box-shadow: 0 0 0 transparent;
+    .pad.lit::after { opacity: 1; }
+    /* Circular layout – generous gaps (~28-36px clear space between pads)
+       Research: ≥12-16px gap preferred; separation reduces mistaps more than size alone */
+    .pad-green  {
+      top: 4px; left: 50%; margin-left: -55px;
+      background: linear-gradient(145deg, #1a6b1a, #0a3a0a);
     }
-
+    .pad-red {
+      top: 88px; right: 2px;
+      background: linear-gradient(145deg, #6b1a2a, #3a0a15);
+    }
+    .pad-yellow {
+      bottom: 88px; right: 2px;
+      background: linear-gradient(145deg, #6b5a0a, #3a3005);
+    }
+    .pad-blue {
+      bottom: 4px; left: 50%; margin-left: -55px;
+      background: linear-gradient(145deg, #0a3a6b, #051e3a);
+    }
+    .pad-purple {
+      bottom: 88px; left: 2px;
+      background: linear-gradient(145deg, #4a1a6b, #250a3a);
+    }
+    .pad-orange {
+      top: 88px; left: 2px;
+      background: linear-gradient(145deg, #6b3a0a, #3a1e05);
+    }
+    .pad.lit, .pad.active { filter: brightness(1.35) saturate(1.4); z-index: 2; }
     .pad-green.lit, .pad-green.active {
-      background: linear-gradient(145deg, #39ff14, #1aff00) !important;
-      box-shadow: 0 0 28px #39ff14, 0 0 55px rgba(57,255,20,0.7), inset 0 0 18px rgba(255,255,255,0.35);
-      border-color: #bfffbf;
+      background: linear-gradient(145deg, #39ff14, #00e000) !important;
+      box-shadow: 0 0 28px #39ff14, 0 0 55px rgba(57,255,20,0.7), 0 0 90px rgba(57,255,20,0.35);
+      border-color: #bfffbf; transform: scale(0.94);
     }
     .pad-red.lit, .pad-red.active {
-      background: linear-gradient(145deg, #ff2a2a, #ff0000) !important;
-      box-shadow: 0 0 28px #ff2a2a, 0 0 55px rgba(255,42,42,0.7), inset 0 0 18px rgba(255,255,255,0.35);
-      border-color: #ffbfbf;
+      background: linear-gradient(145deg, #ff2a4a, #ff0040) !important;
+      box-shadow: 0 0 25px #ff2a4a, 0 0 50px rgba(255,42,74,0.7), 0 0 80px rgba(255,42,74,0.3);
+      border-color: #ffbfcf; transform: scale(0.94);
     }
     .pad-yellow.lit, .pad-yellow.active {
       background: linear-gradient(145deg, #ffe600, #ffcc00) !important;
-      box-shadow: 0 0 28px #ffe600, 0 0 55px rgba(255,230,0,0.7), inset 0 0 18px rgba(255,255,255,0.35);
-      border-color: #ffffbf;
+      box-shadow: 0 0 25px #ffe600, 0 0 50px rgba(255,230,0,0.7), 0 0 80px rgba(255,230,0,0.3);
+      border-color: #ffffbf; transform: scale(0.94);
     }
     .pad-blue.lit, .pad-blue.active {
-      background: linear-gradient(145deg, #00f0ff, #0088ff) !important;
-      box-shadow: 0 0 28px #00f0ff, 0 0 55px rgba(0,240,255,0.7), inset 0 0 18px rgba(255,255,255,0.35);
-      border-color: #bfffff;
+      background: linear-gradient(145deg, #00d4ff, #0099ff) !important;
+      box-shadow: 0 0 28px #00d4ff, 0 0 55px rgba(0,212,255,0.7), 0 0 90px rgba(0,212,255,0.35);
+      border-color: #bff5ff; transform: scale(0.94);
     }
-
-    .pad:active:not(.disabled) {
-      transform: scale(0.93) translateY(3px);
+    .pad-purple.lit, .pad-purple.active {
+      background: linear-gradient(145deg, #c44dff, #9b2dff) !important;
+      box-shadow: 0 0 25px #c44dff, 0 0 50px rgba(196,77,255,0.7), 0 0 80px rgba(196,77,255,0.3);
+      border-color: #e8bfff; transform: scale(0.94);
     }
-
-    .pad.disabled {
-      pointer-events: none;
-      opacity: 0.75;
+    .pad-orange.lit, .pad-orange.active {
+      background: linear-gradient(145deg, #ff8c00, #ff6600) !important;
+      box-shadow: 0 0 25px #ff8c00, 0 0 50px rgba(255,140,0,0.7), 0 0 80px rgba(255,140,0,0.3);
+      border-color: #ffdfbf; transform: scale(0.94);
     }
-
-    /* Center alien button */
+    .pad.disabled { pointer-events: none; opacity: 0.7; }
     .center {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 86px;
-      height: 86px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #1a2a1a, #050a05);
-      border: 3px solid var(--glow-green);
-      box-shadow:
-        0 0 22px rgba(57,255,20,0.5),
-        inset 0 0 14px rgba(0,0,0,0.8);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 5;
-      transition: box-shadow 0.2s;
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 100px; height: 100px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #1a1230, #06040f);
+      border: 3px solid rgba(0,212,255,0.7);
+      box-shadow: 0 0 30px rgba(0,180,255,0.5), inset 0 0 16px rgba(0,0,0,0.8);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 5; transition: all 0.2s; overflow: hidden;
     }
-
-    .center:hover, .center:active {
-      box-shadow: 0 0 35px rgba(57,255,20,0.85), inset 0 0 14px rgba(0,0,0,0.8);
-    }
-
-    .center img {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
+    .center:hover { box-shadow: 0 0 40px rgba(0,212,255,0.7), inset 0 0 16px rgba(0,0,0,0.8); }
+    .center img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; transition: transform 0.2s; }
+    .center.react img { transform: scale(1.12); }
     .center .status-text {
-      font-size: 0.52rem;
-      letter-spacing: 0.8px;
-      color: var(--glow-green);
-      margin-top: 1px;
-      text-transform: uppercase;
-      font-weight: 600;
+      position: absolute; bottom: 4px; font-size: 0.48rem; letter-spacing: 0.6px;
+      color: var(--cyan); font-weight: 700; text-transform: uppercase; text-shadow: 0 0 6px var(--cyan);
     }
-
-    /* Message */
     .message {
-      min-height: 26px;
-      font-size: 0.9rem;
-      text-align: center;
-      color: var(--glow-cyan);
-      text-shadow: 0 0 10px var(--glow-cyan);
-      letter-spacing: 0.5px;
-      padding: 0 8px;
+      min-height: 28px; font-size: 0.88rem; text-align: center; color: var(--cyan);
+      text-shadow: 0 0 10px rgba(0,212,255,0.5); letter-spacing: 0.3px; padding: 4px 8px;
+      margin: 2px 0;
     }
-
-    .message.error {
-      color: #ff4466;
-      text-shadow: 0 0 10px #ff4466;
-    }
-
-    .message.success {
-      color: var(--glow-green);
-      text-shadow: 0 0 10px var(--glow-green);
-    }
-
-    /* Controls */
-    .controls {
-      display: flex;
-      gap: 10px;
-      width: 100%;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
+    .message.error { color: #ff4466; text-shadow: 0 0 10px #ff4466; }
+    .message.success { color: var(--green); text-shadow: 0 0 10px var(--green); }
+    .message.warn { color: var(--yellow); text-shadow: 0 0 10px var(--yellow); }
+    .controls { display: flex; gap: 12px; width: 100%; justify-content: center; flex-wrap: wrap; margin-top: 4px; }
     button.ctrl {
-      font-family: inherit;
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      padding: 11px 18px;
-      border: none;
-      border-radius: 28px;
-      cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
-      text-transform: uppercase;
+      font-family: inherit; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.8px;
+      padding: 12px 18px; border: none; border-radius: 26px; cursor: pointer;
+      transition: transform 0.12s, box-shadow 0.12s, opacity 0.12s; text-transform: uppercase;
+      min-width: 70px;
     }
-
     .btn-start {
-      background: linear-gradient(135deg, #39ff14, #00bb00);
-      color: #002200;
-      box-shadow: 0 0 18px rgba(57,255,20,0.5);
+      background: linear-gradient(135deg, #00d4ff, #7a3dff); color: #fff;
+      box-shadow: 0 0 18px rgba(0,180,255,0.45);
     }
-    .btn-start:hover:not(:disabled) {
-      transform: scale(1.05);
-      box-shadow: 0 0 28px rgba(57,255,20,0.8);
-    }
-    .btn-start:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .btn-sound {
-      background: var(--panel);
-      color: var(--glow-cyan);
-      border: 1px solid rgba(0,240,255,0.4);
-    }
-    .btn-sound:hover {
-      background: rgba(0,240,255,0.12);
-    }
-
-    .btn-reset {
-      background: var(--panel);
-      color: #ff6688;
-      border: 1px solid rgba(255,68,102,0.4);
-    }
-
-    /* Level bar */
-    .level-bar {
-      width: 100%;
-      height: 5px;
-      background: #1a1a22;
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    .level-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--glow-green), var(--glow-cyan));
-      width: 0%;
-      transition: width 0.4s ease;
-      box-shadow: 0 0 8px var(--glow-green);
-    }
-
-    /* Overlay */
+    .btn-start:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 0 28px rgba(0,180,255,0.7); }
+    .btn-start:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .btn-hint { background: var(--panel); color: var(--green); border: 1px solid rgba(57,255,20,0.4); }
+    .btn-hint:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-sound, .btn-settings { background: var(--panel); color: #a090c0; border: 1px solid rgba(140,100,255,0.3); }
+    .tip { font-size: 0.62rem; color: #4a3a6a; text-align: center; }
     .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.78);
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
+      position: fixed; inset: 0; background: rgba(4,2,12,0.82);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center; z-index: 200;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 16px;
     }
-    .overlay.show {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
+    .overlay.show { opacity: 1; pointer-events: auto; }
     .overlay-card {
-      background: linear-gradient(160deg, #0f1a0f, #0a0a12);
-      border: 2px solid var(--glow-green);
-      border-radius: 18px;
-      padding: 26px 22px;
-      text-align: center;
-      max-width: 300px;
-      width: 90%;
-      box-shadow: 0 0 40px rgba(57,255,20,0.3);
+      background: linear-gradient(165deg, #140e28, #0a0618); border: 2px solid rgba(0,212,255,0.5);
+      border-radius: 18px; padding: 22px 18px; text-align: center; max-width: 320px; width: 100%;
+      box-shadow: 0 0 50px rgba(80,40,180,0.35);
     }
-
     .overlay-card h2 {
-      font-size: 1.4rem;
-      margin-bottom: 6px;
-      color: var(--glow-green);
+      font-size: 1.35rem; margin-bottom: 6px;
+      background: linear-gradient(90deg, #00d4ff, #c44dff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-
-    .overlay-card p {
-      font-size: 0.85rem;
-      color: #8aba8a;
-      margin-bottom: 14px;
-      line-height: 1.4;
-    }
-
-    .overlay-card .score-big {
-      font-size: 2.1rem;
-      color: var(--glow-cyan);
-      text-shadow: 0 0 15px var(--glow-cyan);
-      margin: 6px 0 14px;
-      font-weight: 700;
-    }
-
-    .tip {
-      font-size: 0.68rem;
-      color: #3a5a3a;
-      text-align: center;
-      margin-top: 2px;
-    }
-
-    /* Loading screen */
+    .overlay-card p { font-size: 0.82rem; color: #9a8ab8; margin-bottom: 10px; line-height: 1.4; }
+    .score-big { font-size: 2rem; font-weight: 800; color: var(--cyan); text-shadow: 0 0 18px var(--cyan); margin: 4px 0 12px; }
+    .stats-row { display: flex; justify-content: space-around; margin: 10px 0 14px; font-size: 0.75rem; color: #8a7aa8; }
+    .stats-row span { display: block; color: var(--text); font-weight: 700; font-size: 1rem; }
+    .hs-list { text-align: left; font-size: 0.78rem; margin: 8px 0 12px; max-height: 120px; overflow-y: auto; }
+    .hs-list div { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid rgba(140,100,255,0.15); color: #a090c0; }
+    .hs-list .rank { color: var(--cyan); font-weight: 700; width: 24px; }
+    .settings-grid { display: grid; gap: 10px; text-align: left; margin: 12px 0; }
+    .settings-grid label { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #b0a0d0; }
+    .settings-grid input[type="range"] { width: 110px; accent-color: var(--cyan); }
     #loader {
-      position: fixed;
-      inset: 0;
-      background: #05050a;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      transition: opacity 0.4s;
+      position: fixed; inset: 0; background: #06040f; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.4s;
     }
-    #loader.hide {
-      opacity: 0;
-      pointer-events: none;
-    }
+    #loader.hide { opacity: 0; pointer-events: none; }
     #loader .alien-spin {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 3px solid var(--glow-green);
-      box-shadow: 0 0 25px var(--glow-green);
-      overflow: hidden;
-      margin-bottom: 16px;
-      animation: logoPulse 1.5s ease-in-out infinite;
+      width: 90px; height: 90px; border-radius: 20px; border: 2px solid rgba(0,212,255,0.6);
+      box-shadow: 0 0 30px rgba(100,60,255,0.5); overflow: hidden; margin-bottom: 14px;
+      animation: logoPulse 1.6s ease-in-out infinite;
     }
-    #loader .alien-spin img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    #loader p {
-      color: var(--glow-green);
-      font-size: 0.9rem;
-      letter-spacing: 2px;
-    }
-
-    /* Responsive */
-    @media (max-width: 360px) {
-      .board { width: 260px; height: 260px; }
-      .pad { width: 112px; height: 112px; border-radius: 18px; }
-      .center { width: 74px; height: 74px; }
-      .center img { width: 42px; height: 42px; }
-      h1 { font-size: 1.45rem; letter-spacing: 2px; }
-    }
-
-    @media (max-height: 640px) {
-      .logo-wrap { width: 64px; height: 64px; margin-bottom: 4px; }
-      .board { width: 250px; height: 250px; }
-      .pad { width: 108px; height: 108px; }
-      .center { width: 70px; height: 70px; }
-      .center img { width: 40px; height: 40px; }
+    #loader .alien-spin img { width: 100%; height: 100%; object-fit: cover; }
+    #loader p { color: var(--cyan); font-size: 0.9rem; letter-spacing: 2px; }
+    @media (max-width: 420px) {
+      .board { width: 360px; height: 360px; }
+      .pad { width: 100px; height: 100px; border-radius: 24px; }
+      .pad-green, .pad-blue { margin-left: -50px; }
+      .center { width: 90px; height: 90px; }
+      .center img { width: 56px; height: 56px; }
       h1 { font-size: 1.35rem; }
-      .container { gap: 8px; padding: 10px; }
+      .hud-value { font-size: 1rem; }
     }
+    @media (max-width: 380px) {
+      .board { width: 330px; height: 330px; }
+      .pad { width: 94px; height: 94px; border-radius: 22px; }
+      .pad-green, .pad-blue { margin-left: -47px; }
+      .pad-red, .pad-yellow { right: 4px; }
+      .pad-orange, .pad-purple { left: 4px; }
+      .center { width: 84px; height: 84px; }
+      .center img { width: 52px; height: 52px; }
+    }
+    @media (max-width: 340px) {
+      .board { width: 300px; height: 300px; }
+      .pad { width: 86px; height: 86px; border-radius: 20px; }
+      .pad-green, .pad-blue { margin-left: -43px; }
+      .center { width: 76px; height: 76px; }
+      .center img { width: 46px; height: 46px; }
+    }
+    @media (max-height: 740px) {
+      .logo-wrap { width: 54px; height: 54px; }
+      .board { width: 340px; height: 340px; }
+      .pad { width: 96px; height: 96px; }
+      .pad-green, .pad-blue { margin-left: -48px; }
+      .center { width: 86px; height: 86px; }
+      .center img { width: 52px; height: 52px; }
+      .container { gap: 10px; padding-top: 8px; }
+    }
+
+    /* Pulse ring when pad lights */
+    .pad .ring {
+      position: absolute; inset: -8px; border-radius: 32px;
+      border: 2px solid currentColor; opacity: 0;
+      pointer-events: none; transform: scale(0.85);
+    }
+    .pad.lit .ring {
+      animation: ringPulse 0.45s ease-out forwards;
+    }
+    @keyframes ringPulse {
+      0% { opacity: 0.9; transform: scale(0.9); }
+      100% { opacity: 0; transform: scale(1.25); }
+    }
+    .pad-green .ring { color: #39ff14; }
+    .pad-red .ring { color: #ff2a4a; }
+    .pad-yellow .ring { color: #ffe600; }
+    .pad-blue .ring { color: #00d4ff; }
+    .pad-purple .ring { color: #c44dff; }
+    .pad-orange .ring { color: #ff8c00; }
+
+    /* Sequence length badge */
+    .seq-badge {
+      font-size: 0.7rem; color: #8a7ab0; letter-spacing: 0.5px;
+      text-align: center; margin-top: -4px;
+    }
+    .seq-badge strong { color: var(--cyan); }
+
+    /* Toast notifications */
+    #toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: linear-gradient(135deg, #1a1230, #0e0a1c);
+      border: 1px solid rgba(0,212,255,0.45); color: #e0d0ff;
+      padding: 12px 20px; border-radius: 14px; font-size: 0.85rem;
+      z-index: 300; opacity: 0; transition: all 0.35s ease;
+      box-shadow: 0 0 24px rgba(80,40,180,0.35); pointer-events: none;
+      max-width: 90%; text-align: center;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Pause overlay */
+    #pauseOverlay .overlay-card h2 { margin-bottom: 12px; }
+
+    /* Colorblind patterns on pads */
+    body.cb .pad-green::after { content: ''; background: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,0.15) 4px, rgba(255,255,255,0.15) 8px); opacity: 0.5; }
+    body.cb .pad-red::after { content: ''; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25) 0 3px, transparent 4px); background-size: 12px 12px; opacity: 0.6; }
+    body.cb .pad-yellow::after { content: ''; background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.2) 3px, rgba(0,0,0,0.2) 6px); opacity: 0.4; }
+    body.cb .pad-blue::after { content: ''; background: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(255,255,255,0.12) 5px, rgba(255,255,255,0.12) 10px); opacity: 0.5; }
+    body.cb .pad-purple::after { content: ''; background: radial-gradient(circle, transparent 40%, rgba(255,255,255,0.15) 41% 55%, transparent 56%); background-size: 14px 14px; opacity: 0.5; }
+    body.cb .pad-orange::after { content: ''; background: repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(0,0,0,0.15) 4px, rgba(0,0,0,0.15) 8px); opacity: 0.4; }
+
+    /* Lives hearts style */
+    #lives { letter-spacing: 1px; }
+
   </style>
 </head>
 <body>
-  <!-- Simple loader so user never sees a blank page -->
+  <div id="edgeGlow"></div>
   <div id="loader">
     <div class="alien-spin">
-      <img src="alien-icon.jpg" alt="Alien" onerror="this.style.display='none'">
+      <img src="alien-logo.png" alt="Alien" onerror="this.src='alien-icon-192.png'">
     </div>
     <p>ALIEN SAYS</p>
   </div>
-
   <div class="container" id="app" style="visibility:hidden;">
     <header>
       <div class="logo-wrap">
-        <img src="alien-icon.jpg" alt="Alien" onerror="this.parentElement.style.background='#1a3a1a'">
+        <img src="alien-logo.png" alt="Alien" onerror="this.src='alien-icon-192.png'">
       </div>
       <h1>ALIEN SAYS</h1>
-      <div class="tagline">Watch • Listen • Repeat</div>
+      <div class="tagline">Watch • Listen • Survive</div>
     </header>
-
     <div class="hud">
-      <div class="hud-box">
-        <div class="hud-label">Level</div>
-        <div class="hud-value" id="level">1</div>
-      </div>
-      <div class="hud-box">
-        <div class="hud-label">Score</div>
-        <div class="hud-value" id="score">0</div>
-      </div>
-      <div class="hud-box">
-        <div class="hud-label">Best</div>
-        <div class="hud-value" id="best">0</div>
-      </div>
+      <div class="hud-box"><div class="hud-label">Level</div><div class="hud-value" id="level">1</div></div>
+      <div class="hud-box"><div class="hud-label">Score</div><div class="hud-value" id="score">0</div></div>
+      <div class="hud-box"><div class="hud-label">Lives</div><div class="hud-value" id="lives">3</div></div>
+      <div class="hud-box"><div class="hud-label">Best</div><div class="hud-value" id="best">0</div></div>
     </div>
-
-    <div class="level-bar"><div class="level-fill" id="levelFill"></div></div>
-
+    <div class="modes" id="modeBar">
+      <button class="mode-btn active" data-mode="classic">Classic</button>
+      <button class="mode-btn" data-mode="speed">Speed</button>
+      <button class="mode-btn" data-mode="reverse">Reverse</button>
+      <button class="mode-btn" data-mode="chaos">Chaos</button>
+    </div>
+    <div class="bars">
+      <div class="bar-row"><div class="bar-label">Lvl</div><div class="bar-track"><div class="bar-fill level-fill" id="levelFill"></div></div></div>
+      <div class="bar-row"><div class="bar-label">Power</div><div class="bar-track"><div class="bar-fill power-fill" id="powerFill"></div></div></div>
+    </div>
     <div class="board" id="board">
-      <div class="pad pad-green" data-color="green" id="pad-green"></div>
-      <div class="pad pad-red" data-color="red" id="pad-red"></div>
-      <div class="pad pad-yellow" data-color="yellow" id="pad-yellow"></div>
-      <div class="pad pad-blue" data-color="blue" id="pad-blue"></div>
-
-      <div class="center" id="centerBtn" title="Start">
-        <img src="alien-icon.jpg" alt="Alien" onerror="this.style.display='none'">
+      <div class="pad pad-green" data-color="green" id="pad-green"><div class="ring"></div></div>
+      <div class="pad pad-red" data-color="red" id="pad-red"><div class="ring"></div></div>
+      <div class="pad pad-yellow" data-color="yellow" id="pad-yellow"><div class="ring"></div></div>
+      <div class="pad pad-blue" data-color="blue" id="pad-blue"><div class="ring"></div></div>
+      <div class="pad pad-purple" data-color="purple" id="pad-purple"><div class="ring"></div></div>
+      <div class="pad pad-orange" data-color="orange" id="pad-orange"><div class="ring"></div></div>
+      <div class="center" id="centerBtn" title="Start / Status">
+        <img src="alien-logo.png" alt="Alien" onerror="this.src='alien-icon-192.png'">
         <div class="status-text" id="statusText">READY</div>
       </div>
     </div>
-
-    <div class="message" id="message">Tap the alien or START</div>
-
+    <div class="seq-badge" id="seqBadge">Sequence: <strong>0</strong></div>
+    <div class="message" id="message">Choose mode & tap START</div>
     <div class="controls">
       <button class="ctrl btn-start" id="startBtn">START</button>
-      <button class="ctrl btn-sound" id="soundBtn">🔊 ON</button>
-      <button class="ctrl btn-reset" id="resetBtn">RESET</button>
+      <button class="ctrl btn-hint" id="hintBtn" disabled title="Uses 40 Power">HINT</button>
+      <button class="ctrl btn-hint" id="replayBtn" disabled title="Uses 25 Power">REPLAY</button>
+      <button class="ctrl btn-sound" id="pauseBtn" title="Pause (P)">⏸</button>
+      <button class="ctrl btn-sound" id="soundBtn">🔊</button>
+      <button class="ctrl btn-settings" id="settingsBtn">⚙️</button>
     </div>
-
-    <div class="tip">Add to Home Screen for the full experience</div>
+    <div class="tip">P = Pause · H = Hint · R = Replay · 1-6 / QWEASD = pads</div>
   </div>
-
-  <!-- Game Over Overlay -->
   <div class="overlay" id="overlay">
     <div class="overlay-card">
       <h2 id="overlayTitle">GAME OVER</h2>
-      <p id="overlayMsg">The aliens are not impressed...</p>
+      <p id="overlayMsg">The aliens observed your performance.</p>
       <div class="score-big" id="overlayScore">0</div>
-      <button class="ctrl btn-start" id="playAgainBtn">PLAY AGAIN</button>
+      <div class="stats-row">
+        <div>Level<br><span id="statLevel">1</span></div>
+        <div>Combo<br><span id="statCombo">0</span></div>
+        <div>Mode<br><span id="statMode">Classic</span></div>
+      </div>
+      <div class="hs-list" id="hsList"></div>
+      <button class="ctrl btn-start" id="playAgainBtn" style="width:100%;margin-top:6px;">PLAY AGAIN</button>
     </div>
   </div>
-
+  <div class="overlay" id="settingsOverlay">
+    <div class="overlay-card">
+      <h2>Settings</h2>
+      <div class="settings-grid">
+        <label>Sound Volume <input type="range" id="volSlider" min="0" max="100" value="70"></label>
+        <label>Vibration <input type="checkbox" id="vibCheck" checked></label>
+        <label>Show Hints <input type="checkbox" id="hintCheck" checked></label>
+        <label>Colorblind patterns <input type="checkbox" id="cbCheck"></label>
+      </div>
+      <button class="ctrl btn-start" id="closeSettings" style="width:100%;">DONE</button>
+    </div>
+  </div>
+  <div id="toast"></div>
+  <div class="overlay" id="pauseOverlay">
+    <div class="overlay-card">
+      <h2>PAUSED</h2>
+      <p>Take a breath. The aliens can wait.</p>
+      <button class="ctrl btn-start" id="resumeBtn" style="width:100%;margin-top:8px;">RESUME</button>
+      <button class="ctrl btn-reset" id="quitBtn" style="width:100%;margin-top:10px;background:var(--panel);color:#ff6688;border:1px solid rgba(255,68,102,0.4);">QUIT TO MENU</button>
+    </div>
+  </div>
   <script>
-    (function () {
-      'use strict';
+  (function () {
+    'use strict';
+    function hideLoader() {
+      var l = document.getElementById('loader');
+      var a = document.getElementById('app');
+      if (l) l.classList.add('hide');
+      if (a) a.style.visibility = 'visible';
+      setTimeout(function () { if (l) l.style.display = 'none'; }, 450);
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () { setTimeout(hideLoader, 280); });
+    } else { setTimeout(hideLoader, 280); }
 
-      // ---------- Loader ----------
-      function hideLoader() {
-        var loader = document.getElementById('loader');
-        var app = document.getElementById('app');
-        if (loader) loader.classList.add('hide');
-        if (app) app.style.visibility = 'visible';
-        setTimeout(function () {
-          if (loader) loader.style.display = 'none';
-        }, 450);
-      }
+    var COLORS = ['green', 'red', 'yellow', 'blue', 'purple', 'orange'];
+    var FREQS = { green: 329.63, red: 261.63, yellow: 392.00, blue: 220.00, purple: 349.23, orange: 293.66 };
+    var MODE_NAMES = { classic: 'Classic', speed: 'Speed', reverse: 'Reverse', chaos: 'Chaos' };
 
-      // Hide loader as soon as DOM is ready (images can load later)
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function () {
-          setTimeout(hideLoader, 300);
-        });
-      } else {
-        setTimeout(hideLoader, 300);
-      }
+    var sequence = [], playerSeq = [], level = 1, score = 0, combo = 0, maxCombo = 0, power = 0, best = 0, lives = 3, isPaused = false, totalCorrect = 0, gamesPlayed = 0;
+    var highScores = [], mode = 'classic', isPlaying = false, isShowing = false, canClick = false;
+    var soundEnabled = true, volume = 0.7, vibrationOn = true, hintsEnabled = true;
 
-      // ---------- Audio ----------
-      var AudioCtx = window.AudioContext || window.webkitAudioContext;
-      var audioCtx = null;
-      var soundEnabled = true;
+    try {
+      best = parseInt(localStorage.getItem('alienSaysBest2') || '0', 10) || 0;
+      highScores = JSON.parse(localStorage.getItem('alienSaysHS') || '[]') || [];
+      volume = parseFloat(localStorage.getItem('alienSaysVol') || '0.7') || 0.7;
+      if (localStorage.getItem('alienSaysCB') === '1') document.body.classList.add('cb');
+    } catch (e) {}
 
-      var freqs = {
-        green: 329.63,
-        red: 261.63,
-        yellow: 392.00,
-        blue: 220.00
-      };
+    var pads = {};
+    COLORS.forEach(function (c) { pads[c] = document.getElementById('pad-' + c); });
+    var levelEl = document.getElementById('level'), scoreEl = document.getElementById('score');
+    var livesEl = document.getElementById('lives'), bestEl = document.getElementById('best');
+    var replayBtn = document.getElementById('replayBtn');
+    var seqBadge = document.getElementById('seqBadge');
+    var toastEl = document.getElementById('toast');
+    var pauseOverlay = document.getElementById('pauseOverlay');
+    var messageEl = document.getElementById('message'), statusText = document.getElementById('statusText');
+    var startBtn = document.getElementById('startBtn'), hintBtn = document.getElementById('hintBtn');
+    var soundBtn = document.getElementById('soundBtn'), settingsBtn = document.getElementById('settingsBtn');
+    var centerBtn = document.getElementById('centerBtn'), overlay = document.getElementById('overlay');
+    var settingsOverlay = document.getElementById('settingsOverlay');
+    var levelFill = document.getElementById('levelFill'), powerFill = document.getElementById('powerFill');
+    var edgeGlow = document.getElementById('edgeGlow'), modeBar = document.getElementById('modeBar');
+    if (bestEl) bestEl.textContent = best;
 
-      function initAudio() {
-        try {
-          if (!audioCtx) audioCtx = new AudioCtx();
-          if (audioCtx.state === 'suspended') audioCtx.resume();
-        } catch (e) {
-          console.warn('Audio not available', e);
-        }
-      }
-
-      function playTone(color, duration) {
-        duration = duration || 0.35;
-        if (!soundEnabled || !audioCtx) return;
-        try {
-          var osc = audioCtx.createOscillator();
-          var gain = audioCtx.createGain();
-          osc.type = 'sine';
-          osc.frequency.value = freqs[color] || 300;
-          gain.gain.setValueAtTime(0.28, audioCtx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start();
-          osc.stop(audioCtx.currentTime + duration);
-        } catch (e) {}
-      }
-
-      function playSuccess() {
-        if (!soundEnabled || !audioCtx) return;
-        try {
-          [523.25, 659.25, 783.99].forEach(function (f, i) {
-            var osc = audioCtx.createOscillator();
-            var gain = audioCtx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.value = f;
-            var t = audioCtx.currentTime + i * 0.12;
-            gain.gain.setValueAtTime(0.18, t);
-            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start(t);
-            osc.stop(t + 0.3);
-          });
-        } catch (e) {}
-      }
-
-      function playError() {
-        if (!soundEnabled || !audioCtx) return;
-        try {
-          var osc = audioCtx.createOscillator();
-          var gain = audioCtx.createGain();
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(180, audioCtx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.4);
-          gain.gain.setValueAtTime(0.22, audioCtx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.45);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start();
-          osc.stop(audioCtx.currentTime + 0.5);
-        } catch (e) {}
-      }
-
-      function playStartFanfare() {
-        if (!soundEnabled || !audioCtx) return;
-        try {
-          [220, 277, 330, 440].forEach(function (f, i) {
-            var osc = audioCtx.createOscillator();
-            var gain = audioCtx.createGain();
-            osc.type = 'square';
-            osc.frequency.value = f;
-            var t = audioCtx.currentTime + i * 0.08;
-            gain.gain.setValueAtTime(0.12, t);
-            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start(t);
-            osc.stop(t + 0.25);
-          });
-        } catch (e) {}
-      }
-
-      // ---------- Game State ----------
-      var colors = ['green', 'red', 'yellow', 'blue'];
-      var sequence = [];
-      var playerSeq = [];
-      var level = 1;
-      var score = 0;
-      var best = 0;
+    var AudioCtx = window.AudioContext || window.webkitAudioContext, audioCtx = null;
+    function initAudio() {
+      try { if (!audioCtx) audioCtx = new AudioCtx(); if (audioCtx.state === 'suspended') audioCtx.resume(); } catch (e) {}
+    }
+    function playTone(color, duration) {
+      duration = duration || 0.32;
+      if (!soundEnabled || !audioCtx) return;
       try {
-        best = parseInt(localStorage.getItem('alienSaysBest') || '0', 10) || 0;
+        var osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+        osc.type = 'sine'; osc.frequency.value = FREQS[color] || 300;
+        var t = audioCtx.currentTime;
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.exponentialRampToValueAtTime(0.25 * volume, t + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(t); osc.stop(t + duration + 0.02);
       } catch (e) {}
-      var isPlaying = false;
-      var isShowing = false;
-      var canClick = false;
+    }
+    function playChord(freqs, duration) {
+      if (!soundEnabled || !audioCtx) return;
+      freqs.forEach(function (f, i) {
+        try {
+          var osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+          osc.type = i % 2 ? 'triangle' : 'sine'; osc.frequency.value = f;
+          var t = audioCtx.currentTime + i * 0.04;
+          gain.gain.setValueAtTime(0.12 * volume, t);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.start(t); osc.stop(t + duration + 0.05);
+        } catch (e) {}
+      });
+    }
+    function playSuccess() { playChord([523.25, 659.25, 783.99, 1046.5], 0.22); }
+    function playError() {
+      if (!soundEnabled || !audioCtx) return;
+      try {
+        var osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(160, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.45);
+        gain.gain.setValueAtTime(0.2 * volume, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.55);
+      } catch (e) {}
+    }
+    function playStart() { playChord([220, 277, 330, 440, 554], 0.18); }
 
-      // DOM refs
-      var pads = {
-        green: document.getElementById('pad-green'),
-        red: document.getElementById('pad-red'),
-        yellow: document.getElementById('pad-yellow'),
-        blue: document.getElementById('pad-blue')
-      };
-      var levelEl = document.getElementById('level');
-      var scoreEl = document.getElementById('score');
-      var bestEl = document.getElementById('best');
-      var messageEl = document.getElementById('message');
-      var statusText = document.getElementById('statusText');
-      var startBtn = document.getElementById('startBtn');
-      var soundBtn = document.getElementById('soundBtn');
-      var resetBtn = document.getElementById('resetBtn');
-      var centerBtn = document.getElementById('centerBtn');
-      var overlay = document.getElementById('overlay');
-      var overlayTitle = document.getElementById('overlayTitle');
-      var overlayMsg = document.getElementById('overlayMsg');
-      var overlayScore = document.getElementById('overlayScore');
-      var playAgainBtn = document.getElementById('playAgainBtn');
-      var levelFill = document.getElementById('levelFill');
+    function setMessage(text, type) {
+      if (!messageEl) return;
+      messageEl.textContent = text;
+      messageEl.className = 'message' + (type ? ' ' + type : '');
+    }
+    function setStatus(t) { if (statusText) statusText.textContent = t; }
+    function showToast(msg, ms) {
+      ms = ms || 2200;
+      if (!toastEl) return;
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(function () { toastEl.classList.remove('show'); }, ms);
+    }
 
+    function updateHUD() {
+      if (levelEl) levelEl.textContent = level;
+      if (scoreEl) scoreEl.textContent = score;
+      if (livesEl) livesEl.textContent = '♥'.repeat(Math.max(0, lives)) || '0';
       if (bestEl) bestEl.textContent = best;
+      if (levelFill) levelFill.style.width = Math.min(100, (level / 25) * 100) + '%';
+      if (powerFill) powerFill.style.width = Math.min(100, power) + '%';
+      if (hintBtn) hintBtn.disabled = !(isPlaying && power >= 40 && hintsEnabled && canClick && !isPaused);
+      if (replayBtn) replayBtn.disabled = !(isPlaying && power >= 25 && canClick && sequence.length > 0 && !isPaused);
+      if (seqBadge) seqBadge.innerHTML = 'Sequence: <strong>' + sequence.length + '</strong> · Combo ×' + (1 + Math.floor(combo / 5) * 0.25).toFixed(2).replace(/\.00$/, '');
+    }
+    function lightPad(color, on) {
+      var p = pads[color]; if (!p) return;
+      if (on) p.classList.add('lit'); else p.classList.remove('lit');
+    }
+    function flashEdge(color) {
+      if (!edgeGlow) return;
+      var map = { green: '#39ff14', red: '#ff2a4a', yellow: '#ffe600', blue: '#00d4ff', purple: '#c44dff', orange: '#ff8c00' };
+      edgeGlow.style.setProperty('--glow-color', map[color] || '#00d4ff');
+      edgeGlow.style.opacity = '0.55';
+      setTimeout(function () { edgeGlow.style.opacity = '0'; }, 280);
+    }
+    function flashPad(color, ms) {
+      ms = ms || 340;
+      return new Promise(function (resolve) {
+        lightPad(color, true); playTone(color, ms / 1000); flashEdge(color);
+        if (vibrationOn && navigator.vibrate) { try { navigator.vibrate(25); } catch (e) {} }
+        setTimeout(function () { lightPad(color, false); setTimeout(resolve, 90); }, ms);
+      });
+    }
+    function disablePads(dis) {
+      COLORS.forEach(function (c) {
+        if (pads[c]) { if (dis) pads[c].classList.add('disabled'); else pads[c].classList.remove('disabled'); }
+      });
+    }
+    function centerReact() {
+      if (!centerBtn) return;
+      centerBtn.classList.add('react');
+      setTimeout(function () { centerBtn.classList.remove('react'); }, 220);
+    }
+    function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 
-      // ---------- Helpers ----------
-      function setMessage(text, type) {
-        if (!messageEl) return;
-        messageEl.textContent = text;
-        messageEl.className = 'message' + (type ? ' ' + type : '');
+    function getSpeed() {
+      var base = mode === 'speed' ? 280 : 380;
+      return Math.max(160, base - level * (mode === 'speed' ? 11 : 7));
+    }
+
+    async function showSequence() {
+      isShowing = true; canClick = false; disablePads(true);
+      setStatus('WATCH');
+      setMessage(mode === 'reverse' ? 'Watch carefully (may reverse)...' : 'Alien is speaking...');
+      await sleep(420);
+      var seqToShow = sequence.slice();
+      var doReverse = mode === 'reverse' && level > 3 && Math.random() < 0.42;
+      if (doReverse) {
+        seqToShow = seqToShow.slice().reverse();
+        setMessage('⚠ REVERSED sequence!', 'warn');
+        await sleep(500);
       }
-
-      function setStatus(text) {
-        if (statusText) statusText.textContent = text;
-      }
-
-      function updateHUD() {
-        if (levelEl) levelEl.textContent = level;
-        if (scoreEl) scoreEl.textContent = score;
-        if (bestEl) bestEl.textContent = best;
-        if (levelFill) {
-          var pct = Math.min(100, (level / 20) * 100);
-          levelFill.style.width = pct + '%';
+      var speed = getSpeed();
+      for (var i = 0; i < seqToShow.length; i++) {
+        if (mode === 'chaos' && level > 2 && Math.random() < 0.22) {
+          var decoy = COLORS[Math.floor(Math.random() * 6)];
+          lightPad(decoy, true);
+          setTimeout(function (d) { lightPad(d, false); }.bind(null, decoy), speed * 0.55);
         }
+        await flashPad(seqToShow[i], speed);
       }
+      await sleep(200);
+      isShowing = false; canClick = true; disablePads(false);
+      setStatus('YOUR TURN');
+      setMessage(doReverse ? 'Repeat the ORIGINAL order!' : 'Your turn — repeat!');
+      playerSeq = []; updateHUD();
+    }
 
-      function lightPad(color, on) {
-        var pad = pads[color];
-        if (!pad) return;
-        if (on) pad.classList.add('lit');
-        else pad.classList.remove('lit');
+    function nextRound() {
+      var next = COLORS[Math.floor(Math.random() * 6)];
+      sequence.push(next);
+      if (mode === 'speed' && level > 4 && Math.random() < 0.18) {
+        sequence.push(COLORS[Math.floor(Math.random() * 6)]);
       }
+      updateHUD(); showSequence();
+    }
 
-      function flashPad(color, ms) {
-        ms = ms || 380;
-        return new Promise(function (resolve) {
-          lightPad(color, true);
-          playTone(color, ms / 1000);
-          setTimeout(function () {
-            lightPad(color, false);
-            setTimeout(resolve, 110);
-          }, ms);
-        });
-      }
-
-      function disablePads(disabled) {
-        Object.keys(pads).forEach(function (k) {
-          var p = pads[k];
-          if (!p) return;
-          if (disabled) p.classList.add('disabled');
-          else p.classList.remove('disabled');
-        });
-      }
-
-      function sleep(ms) {
-        return new Promise(function (r) { setTimeout(r, ms); });
-      }
-
-      // ---------- Game Flow ----------
-      async function showSequence() {
-        isShowing = true;
-        canClick = false;
-        disablePads(true);
-        setStatus('WATCH');
-        setMessage('Alien is speaking...');
-        await sleep(450);
-
-        var speed = Math.max(240, 420 - level * 9);
-        for (var i = 0; i < sequence.length; i++) {
-          await flashPad(sequence[i], speed);
-        }
-
-        await sleep(220);
-        isShowing = false;
-        canClick = true;
-        disablePads(false);
-        setStatus('YOUR TURN');
-        setMessage('Your turn — repeat!');
-        playerSeq = [];
-      }
-
-      function nextRound() {
-        var next = colors[Math.floor(Math.random() * 4)];
-        sequence.push(next);
-        updateHUD();
-        showSequence();
-      }
-
-      function handlePadClick(color) {
-        if (!canClick || isShowing || !isPlaying) return;
-
-        initAudio();
-        playerSeq.push(color);
-        flashPad(color, 260);
-
-        var idx = playerSeq.length - 1;
-        if (playerSeq[idx] !== sequence[idx]) {
-          canClick = false;
-          playError();
-          setMessage('Wrong sequence!', 'error');
-          setStatus('FAIL');
-          Object.keys(pads).forEach(function (k) {
-            if (pads[k]) pads[k].classList.add('lit');
-          });
-          setTimeout(function () {
-            Object.keys(pads).forEach(function (k) {
-              if (pads[k]) pads[k].classList.remove('lit');
-            });
-            endGame(false);
-          }, 650);
-          return;
-        }
-
-        if (playerSeq.length === sequence.length) {
-          canClick = false;
-          score += level * 10;
-          if (score > best) {
-            best = score;
-            try { localStorage.setItem('alienSaysBest', String(best)); } catch (e) {}
-          }
+    function handlePadClick(color) {
+      if (!canClick || isShowing || !isPlaying) return;
+      initAudio(); playerSeq.push(color); flashPad(color, 240); centerReact();
+      var idx = playerSeq.length - 1;
+      if (playerSeq[idx] !== sequence[idx]) {
+        canClick = false; combo = 0; lives--; playError();
+        COLORS.forEach(function (c) { if (pads[c]) pads[c].classList.add('lit'); });
+        setTimeout(function () {
+          COLORS.forEach(function (c) { if (pads[c]) pads[c].classList.remove('lit'); });
           updateHUD();
-          playSuccess();
-          setMessage('Correct! Next level...', 'success');
-          setStatus('GOOD');
-          level++;
-          setTimeout(function () { nextRound(); }, 850);
-        }
+          if (lives <= 0) {
+            setMessage('Out of lives!', 'error'); setStatus('FAIL');
+            endGame();
+          } else {
+            setMessage('Wrong! ' + lives + ' live' + (lives === 1 ? '' : 's') + ' left', 'error');
+            setStatus('RETRY');
+            // replay the same sequence
+            playerSeq = [];
+            setTimeout(function () { showSequence(); }, 900);
+          }
+        }, 650);
+        return;
       }
-
-      function startGame() {
-        initAudio();
-        playStartFanfare();
-        sequence = [];
-        playerSeq = [];
-        level = 1;
-        score = 0;
-        isPlaying = true;
-        updateHUD();
-        if (overlay) overlay.classList.remove('show');
-        if (startBtn) startBtn.disabled = true;
-        setMessage('Get ready...');
-        setStatus('GO');
-        setTimeout(function () { nextRound(); }, 550);
-      }
-
-      function endGame(won) {
-        isPlaying = false;
-        canClick = false;
-        disablePads(true);
-        if (startBtn) startBtn.disabled = false;
-
-        if (overlayTitle) overlayTitle.textContent = won ? 'YOU WIN!' : 'GAME OVER';
-        if (overlayMsg) {
-          overlayMsg.textContent = won
-            ? 'The aliens accept you as one of their own.'
-            : (level > 8
-              ? 'Impressive! The mothership is watching.'
-              : 'The aliens are not impressed... try again!');
-        }
-        if (overlayScore) overlayScore.textContent = score;
-        if (overlay) overlay.classList.add('show');
-        setStatus('END');
-        setMessage(won ? 'Victory!' : 'Game Over — try again');
-      }
-
-      function resetAll() {
-        sequence = [];
-        playerSeq = [];
-        level = 1;
-        score = 0;
-        isPlaying = false;
-        canClick = false;
-        isShowing = false;
-        updateHUD();
-        disablePads(false);
-        Object.keys(pads).forEach(function (k) {
-          if (pads[k]) pads[k].classList.remove('lit', 'active');
-        });
-        if (startBtn) startBtn.disabled = false;
-        if (overlay) overlay.classList.remove('show');
-        setStatus('READY');
-        setMessage('Tap the alien or START');
-      }
-
-      // ---------- Events ----------
-      Object.keys(pads).forEach(function (color) {
-        var el = pads[color];
-        if (!el) return;
-        el.addEventListener('click', function () { handlePadClick(color); });
-        el.addEventListener('touchstart', function (e) {
-          e.preventDefault();
-          handlePadClick(color);
-        }, { passive: false });
-      });
-
-      if (startBtn) startBtn.addEventListener('click', startGame);
-      if (centerBtn) centerBtn.addEventListener('click', function () {
-        if (!isPlaying) startGame();
-      });
-      if (playAgainBtn) playAgainBtn.addEventListener('click', startGame);
-
-      if (soundBtn) {
-        soundBtn.addEventListener('click', function () {
-          soundEnabled = !soundEnabled;
-          soundBtn.textContent = soundEnabled ? '🔊 ON' : '🔇 OFF';
-          if (soundEnabled) initAudio();
-        });
-      }
-
-      if (resetBtn) resetBtn.addEventListener('click', resetAll);
-
-      // Prevent unwanted zoom / gestures on mobile
-      document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
-
-      // Initial
+      combo++; if (combo > maxCombo) maxCombo = combo;
+      power = Math.min(100, power + 6 + Math.floor(combo / 3));
       updateHUD();
-      setMessage('Tap the alien or START');
-    })();
+      if (playerSeq.length === sequence.length) {
+        canClick = false;
+        var mult = 1 + Math.floor(combo / 5) * 0.25;
+        if (mode === 'speed') mult *= 1.35;
+        if (mode === 'chaos') mult *= 1.5;
+        if (mode === 'reverse') mult *= 1.4;
+        score += Math.round(level * 12 * mult);
+        if (score > best) {
+          best = score;
+          try { localStorage.setItem('alienSaysBest2', String(best)); } catch (e) {}
+        }
+        power = Math.min(100, power + 12);
+        totalCorrect++;
+        updateHUD(); playSuccess();
+        var gained = Math.round(level * 12 * mult);
+        setMessage('Correct! +' + gained, 'success');
+        setStatus('GOOD');
+        // Milestones
+        if (level === 5) showToast('🔥 Level 5 — warming up!');
+        else if (level === 10) showToast('👽 Level 10 — the mothership notices you');
+        else if (level === 15) showToast('💫 Level 15 — elite memory!');
+        else if (level === 20) showToast('🏆 Level 20 — legendary!');
+        else if (combo === 10) showToast('⚡ 10-hit combo!');
+        else if (combo === 20) showToast('🌟 20-hit combo — unstoppable!');
+        else if (sequence.length === 8) showToast('🧠 8-step sequence!');
+        else if (sequence.length === 12) showToast('🧬 12-step sequence!');
+        level++;
+        setTimeout(function () { if (!isPaused) nextRound(); }, 780);
+      }
+    }
+
+    function useHint() {
+      if (!isPlaying || power < 40 || !canClick || !hintsEnabled) return;
+      power -= 40; updateHUD();
+      var nextIdx = playerSeq.length;
+      if (nextIdx < sequence.length) {
+        var c = sequence[nextIdx];
+        setMessage('Hint: next is ' + c.toUpperCase(), 'warn');
+        lightPad(c, true); playTone(c, 0.45);
+        setTimeout(function () { lightPad(c, false); }, 480);
+      }
+    }
+
+    
+    function togglePause() {
+      if (!isPlaying) return;
+      isPaused = !isPaused;
+      if (isPaused) {
+        canClick = false;
+        if (pauseOverlay) pauseOverlay.classList.add('show');
+        setStatus('PAUSE');
+      } else {
+        if (pauseOverlay) pauseOverlay.classList.remove('show');
+        if (!isShowing) { canClick = true; setStatus('YOUR TURN'); }
+        else setStatus('WATCH');
+      }
+      updateHUD();
+    }
+
+    function useReplay() {
+      if (!isPlaying || power < 25 || !canClick || sequence.length === 0) return;
+      power -= 25; updateHUD();
+      setMessage('Replaying sequence...', 'warn');
+      playerSeq = [];
+      showSequence();
+    }
+
+    function startGame() {
+      initAudio(); playStart();
+      sequence = []; playerSeq = []; level = 1; score = 0; combo = 0; maxCombo = 0; power = 20; lives = 3; isPaused = false; totalCorrect = 0; gamesPlayed++;
+      isPlaying = true; updateHUD();
+      if (overlay) overlay.classList.remove('show');
+      if (startBtn) startBtn.disabled = true;
+      var btns = modeBar ? modeBar.querySelectorAll('.mode-btn') : [];
+      btns.forEach(function (b) { b.disabled = true; });
+      setMessage('Get ready...'); setStatus('GO');
+      setTimeout(function () { nextRound(); }, 500);
+    }
+
+    function endGame() {
+      isPlaying = false; canClick = false; disablePads(true);
+      if (startBtn) startBtn.disabled = false;
+      var btns = modeBar ? modeBar.querySelectorAll('.mode-btn') : [];
+      btns.forEach(function (b) { b.disabled = false; });
+      highScores.push({ score: score, level: level, mode: mode, date: Date.now() });
+      highScores.sort(function (a, b) { return b.score - a.score; });
+      highScores = highScores.slice(0, 8);
+      try { localStorage.setItem('alienSaysHS', JSON.stringify(highScores)); } catch (e) {}
+      document.getElementById('overlayTitle').textContent = score > 400 ? 'IMPRESSIVE!' : 'GAME OVER';
+      document.getElementById('overlayMsg').textContent =
+        level > 10 ? 'The mothership is intrigued by your mind.' :
+        level > 6 ? 'Not bad for a human.' : 'The aliens expected more.';
+      document.getElementById('overlayScore').textContent = score;
+      document.getElementById('statLevel').textContent = level;
+      document.getElementById('statCombo').textContent = maxCombo;
+      document.getElementById('statMode').textContent = MODE_NAMES[mode] || mode;
+      var list = document.getElementById('hsList');
+      if (list) {
+        list.innerHTML = highScores.length ? '<div style="margin-bottom:4px;color:#7a6a9a;font-size:0.7rem;">TOP SCORES</div>' : '';
+        highScores.forEach(function (h, i) {
+          var d = document.createElement('div');
+          d.innerHTML = '<span class="rank">#' + (i + 1) + '</span> <span>' + (MODE_NAMES[h.mode] || h.mode) + ' L' + h.level + '</span> <span>' + h.score + '</span>';
+          list.appendChild(d);
+        });
+      }
+      if (overlay) overlay.classList.add('show');
+      setStatus('END'); setMessage('Game Over');
+    }
+
+    COLORS.forEach(function (color) {
+      var el = pads[color]; if (!el) return;
+      el.addEventListener('click', function () { handlePadClick(color); });
+      el.addEventListener('touchstart', function (e) { e.preventDefault(); handlePadClick(color); }, { passive: false });
+    });
+    if (startBtn) startBtn.addEventListener('click', startGame);
+    if (centerBtn) centerBtn.addEventListener('click', function () { if (!isPlaying) startGame(); });
+    document.getElementById('playAgainBtn').addEventListener('click', startGame);
+    if (hintBtn) hintBtn.addEventListener('click', useHint);
+    if (replayBtn) replayBtn.addEventListener('click', useReplay);
+    var resumeBtn = document.getElementById('resumeBtn');
+    var quitBtn = document.getElementById('quitBtn');
+    if (resumeBtn) resumeBtn.addEventListener('click', function () { if (isPaused) togglePause(); });
+    if (quitBtn) quitBtn.addEventListener('click', function () {
+      isPaused = false;
+      if (pauseOverlay) pauseOverlay.classList.remove('show');
+      endGame();
+    });
+    var pauseBtn = document.getElementById('pauseBtn');
+    if (pauseBtn) pauseBtn.addEventListener('click', togglePause);
+    if (soundBtn) {
+      soundBtn.addEventListener('click', function () {
+        soundEnabled = !soundEnabled;
+        soundBtn.textContent = soundEnabled ? '🔊' : '🔇';
+        if (soundEnabled) initAudio();
+      });
+    }
+    if (settingsBtn) {
+      settingsBtn.addEventListener('click', function () {
+        document.getElementById('volSlider').value = Math.round(volume * 100);
+        document.getElementById('vibCheck').checked = vibrationOn;
+        document.getElementById('hintCheck').checked = hintsEnabled;
+        var cbEl = document.getElementById('cbCheck');
+        if (cbEl) cbEl.checked = document.body.classList.contains('cb');
+        settingsOverlay.classList.add('show');
+      });
+    }
+    document.getElementById('closeSettings').addEventListener('click', function () {
+      volume = document.getElementById('volSlider').value / 100;
+      vibrationOn = document.getElementById('vibCheck').checked;
+      hintsEnabled = document.getElementById('hintCheck').checked;
+      var cb = document.getElementById('cbCheck').checked;
+      document.body.classList.toggle('cb', cb);
+      try {
+        localStorage.setItem('alienSaysVol', String(volume));
+        localStorage.setItem('alienSaysCB', cb ? '1' : '0');
+      } catch (e) {}
+      settingsOverlay.classList.remove('show');
+      updateHUD();
+    });
+    if (modeBar) {
+      modeBar.addEventListener('click', function (e) {
+        var btn = e.target.closest('.mode-btn');
+        if (!btn || btn.disabled || isPlaying) return;
+        modeBar.querySelectorAll('.mode-btn').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        mode = btn.getAttribute('data-mode');
+        setMessage('Mode: ' + (MODE_NAMES[mode] || mode));
+      });
+    }
+    var keyMap = {
+      '1': 'green', '2': 'red', '3': 'yellow', '4': 'blue', '5': 'purple', '6': 'orange',
+      'q': 'green', 'w': 'red', 'e': 'yellow', 'a': 'purple', 's': 'orange', 'd': 'blue'
+    };
+    document.addEventListener('keydown', function (e) {
+      if (e.repeat) return;
+      var c = keyMap[e.key.toLowerCase()];
+      if (c) handlePadClick(c);
+      if (e.key === ' ' || e.key === 'Enter') { if (!isPlaying) startGame(); }
+      if (e.key === 'h' || e.key === 'H') useHint();
+      if (e.key === 'r' || e.key === 'R') useReplay();
+      if (e.key === 'p' || e.key === 'P' || e.key === 'Escape') togglePause();
+    });
+    document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+    updateHUD();
+    setMessage('Choose mode & tap START');
+  })();
   </script>
 </body>
 </html>
