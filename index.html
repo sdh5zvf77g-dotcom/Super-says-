@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a0f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Alien Says">
+  <link rel="icon" type="image/png" href="alien-icon-192.png">
+  <link rel="apple-touch-icon" href="alien-icon-512.png">
+  <link rel="manifest" href="manifest.json">
+  <title>Alien Says</title>
+  <style>
+    /* Fully offline – no external fonts */
+    :root {
+      --bg: #05050a;
+      --panel: #0d0d15;
+      --glow-green: #39ff14;
+      --glow-cyan: #00f0ff;
+      --glow-magenta: #ff00aa;
+      --glow-yellow: #ffe600;
+      --text: #e0ffe0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      background: radial-gradient(ellipse at center, #0a0a18 0%, #000 70%);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100dvh;
+      min-height: -webkit-fill-available;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Stars background */
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 20px 30px, #fff, transparent),
+        radial-gradient(1px 1px at 40px 70px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1.5px 1.5px at 90px 40px, #fff, transparent),
+        radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 160px 20px, #fff, transparent);
+      background-size: 200px 100px;
+      animation: twinkle 8s linear infinite;
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes twinkle {
+      from { transform: translateY(0); }
+      to { transform: translateY(-100px); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    /* Header / Logo */
+    header {
+      text-align: center;
+      margin-bottom: 2px;
+    }
+
+    .logo-wrap {
+      width: 84px;
+      height: 84px;
+      margin: 0 auto 8px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #1a3a1a, #0a1a0a);
+      border: 3px solid var(--glow-green);
+      box-shadow:
+        0 0 20px var(--glow-green),
+        0 0 40px rgba(57,255,20,0.4),
+        inset 0 0 20px rgba(57,255,20,0.2);
+      overflow: hidden;
+      animation: logoPulse 3s ease-in-out infinite;
+    }
+
+    .logo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    @keyframes logoPulse {
+      0%, 100% { box-shadow: 0 0 20px var(--glow-green), 0 0 40px rgba(57,255,20,0.3); }
+      50% { box-shadow: 0 0 30px var(--glow-green), 0 0 60px rgba(57,255,20,0.6); }
+    }
+
+    h1 {
+      font-size: 1.7rem;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: var(--glow-green);
+      text-shadow: 0 0 20px rgba(57,255,20,0.7), 0 0 40px rgba(57,255,20,0.3);
+      margin-bottom: 2px;
+    }
+
+    .tagline {
+      font-size: 0.72rem;
+      color: #6a9a6a;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    /* HUD */
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      gap: 10px;
+    }
+
+    .hud-box {
+      flex: 1;
+      background: var(--panel);
+      border: 1px solid rgba(57,255,20,0.25);
+      border-radius: 12px;
+      padding: 8px 10px;
+      text-align: center;
+      box-shadow: 0 0 12px rgba(57,255,20,0.1);
+    }
+
+    .hud-label {
+      font-size: 0.6rem;
+      color: #5a8a5a;
+      letter-spacing: 1px;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+    }
+
+    .hud-value {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--glow-green);
+      text-shadow: 0 0 8px var(--glow-green);
+    }
+
+    /* Game board */
+    .board {
+      position: relative;
+      width: 290px;
+      height: 290px;
+      margin: 6px 0;
+      flex-shrink: 0;
+    }
+
+    .pad {
+      position: absolute;
+      width: 125px;
+      height: 125px;
+      border-radius: 22px;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
+      border: 3px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 5px 0 rgba(0,0,0,0.55);
+    }
+
+    .pad::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 19px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.18), transparent 55%);
+      pointer-events: none;
+    }
+
+    .pad::after {
+      content: '';
+      position: absolute;
+      inset: 7px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      pointer-events: none;
+    }
+
+    /* Positions */
+    .pad-green  { top: 0; left: 0; background: linear-gradient(145deg, #1a6b1a, #0d3d0d); }
+    .pad-red    { top: 0; right: 0; background: linear-gradient(145deg, #6b1a1a, #3d0d0d); }
+    .pad-yellow { bottom: 0; left: 0; background: linear-gradient(145deg, #6b6b1a, #3d3d0d); }
+    .pad-blue   { bottom: 0; right: 0; background: linear-gradient(145deg, #1a1a6b, #0d0d3d); }
+
+    /* Active / lit states – stronger lights */
+    .pad.lit, .pad.active {
+      transform: scale(0.96) translateY(2px);
+      box-shadow: 0 0 0 transparent;
+    }
+
+    .pad-green.lit, .pad-green.active {
+      background: linear-gradient(145deg, #39ff14, #1aff00) !important;
+      box-shadow: 0 0 28px #39ff14, 0 0 55px rgba(57,255,20,0.7), inset 0 0 18px rgba(255,255,255,0.35);
+      border-color: #bfffbf;
+    }
+    .pad-red.lit, .pad-red.active {
+      background: linear-gradient(145deg, #ff2a2a, #ff0000) !important;
+      box-shadow: 0 0 28px #ff2a2a, 0 0 55px rgba(255,42,42,0.7), inset 0 0 18px rgba(255,255,255,0.35);
+      border-color: #ffbfbf;
+    }
+    .pad-yellow.lit, .pad-yellow.active {
+      background: linear-gradient(145deg, #ffe600, #ffcc00) !important;
+      box-shadow: 0 0 28px #ffe600, 0 0 55px rgba(255,230,0,0.7), inset 0 0 18px rgba(255,255,255,0.35);
+      border-color: #ffffbf;
+    }
+    .pad-blue.lit, .pad-blue.active {
+      background: linear-gradient(145deg, #00f0ff, #0088ff) !important;
+      box-shadow: 0 0 28px #00f0ff, 0 0 55px rgba(0,240,255,0.7), inset 0 0 18px rgba(255,255,255,0.35);
+      border-color: #bfffff;
+    }
+
+    .pad:active:not(.disabled) {
+      transform: scale(0.93) translateY(3px);
+    }
+
+    .pad.disabled {
+      pointer-events: none;
+      opacity: 0.75;
+    }
+
+    /* Center alien button */
+    .center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #1a2a1a, #050a05);
+      border: 3px solid var(--glow-green);
+      box-shadow:
+        0 0 22px rgba(57,255,20,0.5),
+        inset 0 0 14px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 5;
+      transition: box-shadow 0.2s;
+    }
+
+    .center:hover, .center:active {
+      box-shadow: 0 0 35px rgba(57,255,20,0.85), inset 0 0 14px rgba(0,0,0,0.8);
+    }
+
+    .center img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .center .status-text {
+      font-size: 0.52rem;
+      letter-spacing: 0.8px;
+      color: var(--glow-green);
+      margin-top: 1px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    /* Message */
+    .message {
+      min-height: 26px;
+      font-size: 0.9rem;
+      text-align: center;
+      color: var(--glow-cyan);
+      text-shadow: 0 0 10px var(--glow-cyan);
+      letter-spacing: 0.5px;
+      padding: 0 8px;
+    }
+
+    .message.error {
+      color: #ff4466;
+      text-shadow: 0 0 10px #ff4466;
+    }
+
+    .message.success {
+      color: var(--glow-green);
+      text-shadow: 0 0 10px var(--glow-green);
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    button.ctrl {
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 11px 18px;
+      border: none;
+      border-radius: 28px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+      text-transform: uppercase;
+    }
+
+    .btn-start {
+      background: linear-gradient(135deg, #39ff14, #00bb00);
+      color: #002200;
+      box-shadow: 0 0 18px rgba(57,255,20,0.5);
+    }
+    .btn-start:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 0 28px rgba(57,255,20,0.8);
+    }
+    .btn-start:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-sound {
+      background: var(--panel);
+      color: var(--glow-cyan);
+      border: 1px solid rgba(0,240,255,0.4);
+    }
+    .btn-sound:hover {
+      background: rgba(0,240,255,0.12);
+    }
+
+    .btn-reset {
+      background: var(--panel);
+      color: #ff6688;
+      border: 1px solid rgba(255,68,102,0.4);
+    }
+
+    /* Level bar */
+    .level-bar {
+      width: 100%;
+      height: 5px;
+      background: #1a1a22;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .level-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--glow-green), var(--glow-cyan));
+      width: 0%;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 8px var(--glow-green);
+    }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.78);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .overlay-card {
+      background: linear-gradient(160deg, #0f1a0f, #0a0a12);
+      border: 2px solid var(--glow-green);
+      border-radius: 18px;
+      padding: 26px 22px;
+      text-align: center;
+      max-width: 300px;
+      width: 90%;
+      box-shadow: 0 0 40px rgba(57,255,20,0.3);
+    }
+
+    .overlay-card h2 {
+      font-size: 1.4rem;
+      margin-bottom: 6px;
+      color: var(--glow-green);
+    }
+
+    .overlay-card p {
+      font-size: 0.85rem;
+      color: #8aba8a;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .overlay-card .score-big {
+      font-size: 2.1rem;
+      color: var(--glow-cyan);
+      text-shadow: 0 0 15px var(--glow-cyan);
+      margin: 6px 0 14px;
+      font-weight: 700;
+    }
+
+    .tip {
+      font-size: 0.68rem;
+      color: #3a5a3a;
+      text-align: center;
+      margin-top: 2px;
+    }
+
+    /* Loading screen */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: #05050a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.4s;
+    }
+    #loader.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #loader .alien-spin {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid var(--glow-green);
+      box-shadow: 0 0 25px var(--glow-green);
+      overflow: hidden;
+      margin-bottom: 16px;
+      animation: logoPulse 1.5s ease-in-out infinite;
+    }
+    #loader .alien-spin img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #loader p {
+      color: var(--glow-green);
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+    }
+
+    /* Responsive */
+    @media (max-width: 360px) {
+      .board { width: 260px; height: 260px; }
+      .pad { width: 112px; height: 112px; border-radius: 18px; }
+      .center { width: 74px; height: 74px; }
+      .center img { width: 42px; height: 42px; }
+      h1 { font-size: 1.45rem; letter-spacing: 2px; }
+    }
+
+    @media (max-height: 640px) {
+      .logo-wrap { width: 64px; height: 64px; margin-bottom: 4px; }
+      .board { width: 250px; height: 250px; }
+      .pad { width: 108px; height: 108px; }
+      .center { width: 70px; height: 70px; }
+      .center img { width: 40px; height: 40px; }
+      h1 { font-size: 1.35rem; }
+      .container { gap: 8px; padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Simple loader so user never sees a blank page -->
+  <div id="loader">
+    <div class="alien-spin">
+      <img src="alien-icon.jpg" alt="Alien" onerror="this.style.display='none'">
+    </div>
+    <p>ALIEN SAYS</p>
+  </div>
+
+  <div class="container" id="app" style="visibility:hidden;">
+    <header>
+      <div class="logo-wrap">
+        <img src="alien-icon.jpg" alt="Alien" onerror="this.parentElement.style.background='#1a3a1a'">
+      </div>
+      <h1>ALIEN SAYS</h1>
+      <div class="tagline">Watch • Listen • Repeat</div>
+    </header>
+
+    <div class="hud">
+      <div class="hud-box">
+        <div class="hud-label">Level</div>
+        <div class="hud-value" id="level">1</div>
+      </div>
+      <div class="hud-box">
+        <div class="hud-label">Score</div>
+        <div class="hud-value" id="score">0</div>
+      </div>
+      <div class="hud-box">
+        <div class="hud-label">Best</div>
+        <div class="hud-value" id="best">0</div>
+      </div>
+    </div>
+
+    <div class="level-bar"><div class="level-fill" id="levelFill"></div></div>
+
+    <div class="board" id="board">
+      <div class="pad pad-green" data-color="green" id="pad-green"></div>
+      <div class="pad pad-red" data-color="red" id="pad-red"></div>
+      <div class="pad pad-yellow" data-color="yellow" id="pad-yellow"></div>
+      <div class="pad pad-blue" data-color="blue" id="pad-blue"></div>
+
+      <div class="center" id="centerBtn" title="Start">
+        <img src="alien-icon.jpg" alt="Alien" onerror="this.style.display='none'">
+        <div class="status-text" id="statusText">READY</div>
+      </div>
+    </div>
+
+    <div class="message" id="message">Tap the alien or START</div>
+
+    <div class="controls">
+      <button class="ctrl btn-start" id="startBtn">START</button>
+      <button class="ctrl btn-sound" id="soundBtn">🔊 ON</button>
+      <button class="ctrl btn-reset" id="resetBtn">RESET</button>
+    </div>
+
+    <div class="tip">Add to Home Screen for the full experience</div>
+  </div>
+
+  <!-- Game Over Overlay -->
+  <div class="overlay" id="overlay">
+    <div class="overlay-card">
+      <h2 id="overlayTitle">GAME OVER</h2>
+      <p id="overlayMsg">The aliens are not impressed...</p>
+      <div class="score-big" id="overlayScore">0</div>
+      <button class="ctrl btn-start" id="playAgainBtn">PLAY AGAIN</button>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // ---------- Loader ----------
+      function hideLoader() {
+        var loader = document.getElementById('loader');
+        var app = document.getElementById('app');
+        if (loader) loader.classList.add('hide');
+        if (app) app.style.visibility = 'visible';
+        setTimeout(function () {
+          if (loader) loader.style.display = 'none';
+        }, 450);
+      }
+
+      // Hide loader as soon as DOM is ready (images can load later)
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () {
+          setTimeout(hideLoader, 300);
+        });
+      } else {
+        setTimeout(hideLoader, 300);
+      }
+
+      // ---------- Audio ----------
+      var AudioCtx = window.AudioContext || window.webkitAudioContext;
+      var audioCtx = null;
+      var soundEnabled = true;
+
+      var freqs = {
+        green: 329.63,
+        red: 261.63,
+        yellow: 392.00,
+        blue: 220.00
+      };
+
+      function initAudio() {
+        try {
+          if (!audioCtx) audioCtx = new AudioCtx();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+        } catch (e) {
+          console.warn('Audio not available', e);
+        }
+      }
+
+      function playTone(color, duration) {
+        duration = duration || 0.35;
+        if (!soundEnabled || !audioCtx) return;
+        try {
+          var osc = audioCtx.createOscillator();
+          var gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freqs[color] || 300;
+          gain.gain.setValueAtTime(0.28, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + duration);
+        } catch (e) {}
+      }
+
+      function playSuccess() {
+        if (!soundEnabled || !audioCtx) return;
+        try {
+          [523.25, 659.25, 783.99].forEach(function (f, i) {
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.value = f;
+            var t = audioCtx.currentTime + i * 0.12;
+            gain.gain.setValueAtTime(0.18, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(t);
+            osc.stop(t + 0.3);
+          });
+        } catch (e) {}
+      }
+
+      function playError() {
+        if (!soundEnabled || !audioCtx) return;
+        try {
+          var osc = audioCtx.createOscillator();
+          var gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.4);
+          gain.gain.setValueAtTime(0.22, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.45);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.5);
+        } catch (e) {}
+      }
+
+      function playStartFanfare() {
+        if (!soundEnabled || !audioCtx) return;
+        try {
+          [220, 277, 330, 440].forEach(function (f, i) {
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.value = f;
+            var t = audioCtx.currentTime + i * 0.08;
+            gain.gain.setValueAtTime(0.12, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(t);
+            osc.stop(t + 0.25);
+          });
+        } catch (e) {}
+      }
+
+      // ---------- Game State ----------
+      var colors = ['green', 'red', 'yellow', 'blue'];
+      var sequence = [];
+      var playerSeq = [];
+      var level = 1;
+      var score = 0;
+      var best = 0;
+      try {
+        best = parseInt(localStorage.getItem('alienSaysBest') || '0', 10) || 0;
+      } catch (e) {}
+      var isPlaying = false;
+      var isShowing = false;
+      var canClick = false;
+
+      // DOM refs
+      var pads = {
+        green: document.getElementById('pad-green'),
+        red: document.getElementById('pad-red'),
+        yellow: document.getElementById('pad-yellow'),
+        blue: document.getElementById('pad-blue')
+      };
+      var levelEl = document.getElementById('level');
+      var scoreEl = document.getElementById('score');
+      var bestEl = document.getElementById('best');
+      var messageEl = document.getElementById('message');
+      var statusText = document.getElementById('statusText');
+      var startBtn = document.getElementById('startBtn');
+      var soundBtn = document.getElementById('soundBtn');
+      var resetBtn = document.getElementById('resetBtn');
+      var centerBtn = document.getElementById('centerBtn');
+      var overlay = document.getElementById('overlay');
+      var overlayTitle = document.getElementById('overlayTitle');
+      var overlayMsg = document.getElementById('overlayMsg');
+      var overlayScore = document.getElementById('overlayScore');
+      var playAgainBtn = document.getElementById('playAgainBtn');
+      var levelFill = document.getElementById('levelFill');
+
+      if (bestEl) bestEl.textContent = best;
+
+      // ---------- Helpers ----------
+      function setMessage(text, type) {
+        if (!messageEl) return;
+        messageEl.textContent = text;
+        messageEl.className = 'message' + (type ? ' ' + type : '');
+      }
+
+      function setStatus(text) {
+        if (statusText) statusText.textContent = text;
+      }
+
+      function updateHUD() {
+        if (levelEl) levelEl.textContent = level;
+        if (scoreEl) scoreEl.textContent = score;
+        if (bestEl) bestEl.textContent = best;
+        if (levelFill) {
+          var pct = Math.min(100, (level / 20) * 100);
+          levelFill.style.width = pct + '%';
+        }
+      }
+
+      function lightPad(color, on) {
+        var pad = pads[color];
+        if (!pad) return;
+        if (on) pad.classList.add('lit');
+        else pad.classList.remove('lit');
+      }
+
+      function flashPad(color, ms) {
+        ms = ms || 380;
+        return new Promise(function (resolve) {
+          lightPad(color, true);
+          playTone(color, ms / 1000);
+          setTimeout(function () {
+            lightPad(color, false);
+            setTimeout(resolve, 110);
+          }, ms);
+        });
+      }
+
+      function disablePads(disabled) {
+        Object.keys(pads).forEach(function (k) {
+          var p = pads[k];
+          if (!p) return;
+          if (disabled) p.classList.add('disabled');
+          else p.classList.remove('disabled');
+        });
+      }
+
+      function sleep(ms) {
+        return new Promise(function (r) { setTimeout(r, ms); });
+      }
+
+      // ---------- Game Flow ----------
+      async function showSequence() {
+        isShowing = true;
+        canClick = false;
+        disablePads(true);
+        setStatus('WATCH');
+        setMessage('Alien is speaking...');
+        await sleep(450);
+
+        var speed = Math.max(240, 420 - level * 9);
+        for (var i = 0; i < sequence.length; i++) {
+          await flashPad(sequence[i], speed);
+        }
+
+        await sleep(220);
+        isShowing = false;
+        canClick = true;
+        disablePads(false);
+        setStatus('YOUR TURN');
+        setMessage('Your turn — repeat!');
+        playerSeq = [];
+      }
+
+      function nextRound() {
+        var next = colors[Math.floor(Math.random() * 4)];
+        sequence.push(next);
+        updateHUD();
+        showSequence();
+      }
+
+      function handlePadClick(color) {
+        if (!canClick || isShowing || !isPlaying) return;
+
+        initAudio();
+        playerSeq.push(color);
+        flashPad(color, 260);
+
+        var idx = playerSeq.length - 1;
+        if (playerSeq[idx] !== sequence[idx]) {
+          canClick = false;
+          playError();
+          setMessage('Wrong sequence!', 'error');
+          setStatus('FAIL');
+          Object.keys(pads).forEach(function (k) {
+            if (pads[k]) pads[k].classList.add('lit');
+          });
+          setTimeout(function () {
+            Object.keys(pads).forEach(function (k) {
+              if (pads[k]) pads[k].classList.remove('lit');
+            });
+            endGame(false);
+          }, 650);
+          return;
+        }
+
+        if (playerSeq.length === sequence.length) {
+          canClick = false;
+          score += level * 10;
+          if (score > best) {
+            best = score;
+            try { localStorage.setItem('alienSaysBest', String(best)); } catch (e) {}
+          }
+          updateHUD();
+          playSuccess();
+          setMessage('Correct! Next level...', 'success');
+          setStatus('GOOD');
+          level++;
+          setTimeout(function () { nextRound(); }, 850);
+        }
+      }
+
+      function startGame() {
+        initAudio();
+        playStartFanfare();
+        sequence = [];
+        playerSeq = [];
+        level = 1;
+        score = 0;
+        isPlaying = true;
+        updateHUD();
+        if (overlay) overlay.classList.remove('show');
+        if (startBtn) startBtn.disabled = true;
+        setMessage('Get ready...');
+        setStatus('GO');
+        setTimeout(function () { nextRound(); }, 550);
+      }
+
+      function endGame(won) {
+        isPlaying = false;
+        canClick = false;
+        disablePads(true);
+        if (startBtn) startBtn.disabled = false;
+
+        if (overlayTitle) overlayTitle.textContent = won ? 'YOU WIN!' : 'GAME OVER';
+        if (overlayMsg) {
+          overlayMsg.textContent = won
+            ? 'The aliens accept you as one of their own.'
+            : (level > 8
+              ? 'Impressive! The mothership is watching.'
+              : 'The aliens are not impressed... try again!');
+        }
+        if (overlayScore) overlayScore.textContent = score;
+        if (overlay) overlay.classList.add('show');
+        setStatus('END');
+        setMessage(won ? 'Victory!' : 'Game Over — try again');
+      }
+
+      function resetAll() {
+        sequence = [];
+        playerSeq = [];
+        level = 1;
+        score = 0;
+        isPlaying = false;
+        canClick = false;
+        isShowing = false;
+        updateHUD();
+        disablePads(false);
+        Object.keys(pads).forEach(function (k) {
+          if (pads[k]) pads[k].classList.remove('lit', 'active');
+        });
+        if (startBtn) startBtn.disabled = false;
+        if (overlay) overlay.classList.remove('show');
+        setStatus('READY');
+        setMessage('Tap the alien or START');
+      }
+
+      // ---------- Events ----------
+      Object.keys(pads).forEach(function (color) {
+        var el = pads[color];
+        if (!el) return;
+        el.addEventListener('click', function () { handlePadClick(color); });
+        el.addEventListener('touchstart', function (e) {
+          e.preventDefault();
+          handlePadClick(color);
+        }, { passive: false });
+      });
+
+      if (startBtn) startBtn.addEventListener('click', startGame);
+      if (centerBtn) centerBtn.addEventListener('click', function () {
+        if (!isPlaying) startGame();
+      });
+      if (playAgainBtn) playAgainBtn.addEventListener('click', startGame);
+
+      if (soundBtn) {
+        soundBtn.addEventListener('click', function () {
+          soundEnabled = !soundEnabled;
+          soundBtn.textContent = soundEnabled ? '🔊 ON' : '🔇 OFF';
+          if (soundEnabled) initAudio();
+        });
+      }
+
+      if (resetBtn) resetBtn.addEventListener('click', resetAll);
+
+      // Prevent unwanted zoom / gestures on mobile
+      document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+
+      // Initial
+      updateHUD();
+      setMessage('Tap the alien or START');
+    })();
+  </script>
+</body>
+</html>
