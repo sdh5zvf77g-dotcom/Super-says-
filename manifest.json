@@ -1,12 +1,12 @@
 {
   "name": "Alien Says",
   "short_name": "Alien Says",
-  "description": "Watch, listen, and repeat the alien sequence. How far can you go?",
+  "description": "Watch, listen, and survive the alien sequence. 6 colors, 4 modes, power hints.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#05050a",
-  "theme_color": "#0a0a0f",
+  "background_color": "#06040f",
+  "theme_color": "#0a0618",
   "orientation": "portrait",
   "icons": [
     {

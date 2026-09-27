@@ -1,42 +1,27 @@
 # Alien Says
 
-A fun Simon-style memory game with an alien theme.  
-Watch the sequence, listen to the tones, and repeat it. How far can you go?
+Simon-style memory game with your custom alien icon.
 
-## How to play
-1. Tap **START** or the alien face.
-2. Watch and listen to the glowing sequence.
-3. Repeat the sequence by tapping the colored pads.
-4. Survive as long as you can!
+## Icon
+Uses your latest 3D grey alien artwork for:
+- In-game logo & center button
+- Favicon / Apple touch icon
+- PWA Home Screen icon (192 & 512)
 
-## Run locally
-Just open `index.html` (or `alien-says.html`) in any modern browser.  
-All files must stay in the same folder.
+## Features
+- 6 large light pads with generous spacing
+- 4 modes: Classic · Speed · Reverse · Chaos
+- 3 Lives · Power (Hint + Replay) · Pause
+- Pulse rings, edge glow, milestone toasts
+- Colorblind patterns, high scores, keyboard support
 
 ## Deploy on GitHub Pages
-1. Create a new repository (or use an existing one).
-2. Upload **all** files from this folder:
-   - `index.html`
-   - `alien-says.html` (optional backup)
-   - `manifest.json`
-   - `alien-icon.jpg`
-   - `alien-icon-192.png`
-   - `alien-icon-512.png`
-   - `README.md`
-3. Go to **Settings → Pages**.
-4. Under **Source**, choose **Deploy from a branch**.
-5. Select the branch (usually `main`) and folder `/ (root)`.
-6. Save. After a minute your game will be live at:  
-   `https://YOUR-USERNAME.github.io/REPO-NAME/`
-
-The game works fully offline once loaded and supports **Add to Home Screen** on mobile (uses the alien icon).
+1. Upload **all** files from this zip to the **root** of your repo
+2. Settings → Pages → Deploy from branch → `main` / `(root)`
+3. Open `https://YOUR-USERNAME.github.io/REPO-NAME/`
 
 ## Files
-| File | Purpose |
-|------|---------|
-| `index.html` | Main game (use this for GitHub Pages) |
-| `alien-says.html` | Same game (backup name) |
-| `manifest.json` | PWA / Home Screen config |
-| `alien-icon-*.png` / `.jpg` | Icons & logo |
-
-Enjoy! 👽
+- `index.html` – main game
+- `alien-says.html` – backup
+- `manifest.json` – PWA
+- `alien-logo.png` + `alien-icon-192.png` + `alien-icon-512.png` – your alien
